@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Emergency Request — BloodLink BD</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body { background: linear-gradient(135deg, #fff5f5, #ffffff, #ffe5e5); min-height: 100vh; }
+
+    .emergency-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    /* Urgency Banner */
+    .urgency-banner {
+      background: linear-gradient(135deg, var(--red), #c1121f);
+      color: white;
+      border-radius: var(--radius);
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 28px;
+      animation: pulse-border 2s infinite;
+    }
+
+    @keyframes pulse-border {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(230,57,70,0.4); }
+      50%       { box-shadow: 0 0 0 12px rgba(230,57,70,0); }
+    }
+
+    .urgency-banner i { font-size: 36px; flex-shrink: 0; }
+    .urgency-banner h2 { font-size: 22px; margin-bottom: 4px; }
+    .urgency-banner p  { font-size: 13px; opacity: 0.9; margin: 0; }
+
+    /* Form Card */
+    .form-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 40px 44px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--gray);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--light-gray);
+    }
+
+    /* Urgency Level Selector */
+    .urgency-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .urgency-option {
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .urgency-option i    { font-size: 24px; margin-bottom: 8px; display: block; }
+    .urgency-option h4   { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .urgency-option p    { font-size: 11px; color: var(--gray); margin: 0; }
+
+    .urgency-option.critical { border-color: #e74c3c; }
+    .urgency-option.critical i { color: #e74c3c; }
+    .urgency-option.critical.selected { background: #e74c3c; color: white; }
+    .urgency-option.critical.selected i,
+    .urgency-option.critical.selected p { color: rgba(255,255,255,0.9); }
+
+    .urgency-option.urgent { border-color: var(--warning); }
+    .urgency-option.urgent i { color: var(--warning); }
+    .urgency-option.urgent.selected { background: var(--warning); color: white; }
+    .urgency-option.urgent.selected i,
+    .urgency-option.urgent.selected p { color: rgba(255,255,255,0.9); }
+
+    .urgency-option.normal { border-color: var(--success); }
+    .urgency-option.normal i { color: var(--success); }
+    .urgency-option.normal.selected { background: var(--success); color: white; }
+    .urgency-option.normal.selected i,
+    .urgency-option.normal.selected p { color: rgba(255,255,255,0.9); }
+
+    /* Blood Group Pills */
+    .blood-pills {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .blood-pill {
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 4px;
+      text-align: center;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--red);
+      transition: all 0.25s;
+    }
+
+    .blood-pill:hover   { border-color: var(--red); background: #fff5f5; }
+    .blood-pill.selected { background: var(--red); color: white; border-color: var(--red); }
+
+    /* Input icon wrap */
+    .input-icon-wrap { position: relative; }
+    .input-icon-wrap i {
+      position: absolute; left: 16px;
+      top: 50%; transform: translateY(-50%);
+      color: var(--gray); font-size: 14px;
+      pointer-events: none;
+    }
+    .input-icon-wrap input,
+    .input-icon-wrap select,
+    .input-icon-wrap textarea { padding-left: 44px !important; }
+    .input-icon-wrap textarea { padding-top: 14px !important; }
+
+    /* Alert */
+    .alert-box { display: none; padding: 12px 16px; border-radius: var(--radius-sm);
+                 margin-bottom: 20px; font-size: 13px; font-weight: 500; }
+    .alert-box.show { display: block; }
+
+    /* Success Screen */
+    .success-screen { display: none; text-align: center; padding: 60px 20px; }
+    .success-screen.show { display: block; }
+    .success-icon {
+      width: 100px; height: 100px; background: #f8d7da;
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; margin: 0 auto 24px;
+      font-size: 44px; color: var(--red);
+      animation: popIn 0.5s ease;
+    }
+    @keyframes popIn {
+      0%  { transform: scale(0); opacity: 0; }
+      70% { transform: scale(1.1); }
+      100%{ transform: scale(1); opacity: 1; }
+    }
+
+    /* Broadcast Info Box */
+    .broadcast-info {
+      background: #fff0f0;
+      border: 2px solid #ffcccc;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin-top: 24px;
+      font-size: 13px;
+      color: var(--black);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .broadcast-info i { color: var(--red); font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+
+    @media (max-width: 600px) {
+      .form-card { padding: 24px 20px; }
+      .urgency-options { grid-template-columns: 1fr; }
+      .blood-pills { grid-template-columns: repeat(4, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="index.html" class="logo" style="text-decoration:none;">
+      <i class="fas fa-tint"></i>Blood<span>Link BD</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="search.html">Find Blood</a></li>
+      <li><a href="login.html">Login</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-header">
+    <h1><i class="fas fa-broadcast-tower"></i> Emergency Blood Request</h1>
+    <p>Submit an urgent request — all nearby compatible donors will be alerted instantly</p>
+  </div>
+
+  <div class="emergency-wrap">
+
+    <!-- Urgency Banner -->
+    <div class="urgency-banner">
+      <i class="fas fa-heartbeat"></i>
+      <div>
+        <h2>🚨 Emergency Broadcast System</h2>
+        <p>Your request will be instantly sent to all active, compatible donors in your area.</p>
+      </div>
+    </div>
+
+    <!-- Alert -->
+    <div class="alert-box alert-danger" id="alertBox"></div>
+
+    <!-- Form Card -->
+    <div class="form-card" id="formCard">
+
+      <!-- Section 1: Urgency Level -->
+      <div class="section-label">Step 1 — Select Urgency Level</div>
+      <div class="urgency-options">
+        <div class="urgency-option critical" onclick="selectUrgency('critical', this)">
+          <i class="fas fa-exclamation-circle"></i>
+          <h4>Critical</h4>
+          <p>Need within 1 hour</p>
+        </div>
+        <div class="urgency-option urgent" onclick="selectUrgency('urgent', this)">
+          <i class="fas fa-clock"></i>
+          <h4>Urgent</h4>
+          <p>Need within 24 hours</p>
+        </div>
+        <div class="urgency-option normal" onclick="selectUrgency('normal', this)">
+          <i class="fas fa-calendar-alt"></i>
+          <h4>Planned</h4>
+          <p>Surgery / planned need</p>
+        </div>
+      </div>
+      <input type="hidden" id="urgencyLevel"/>
+
+      <br/>
+
+      <!-- Section 2: Blood Group -->
+      <div class="section-label">Step 2 — Blood Group Required</div>
+      <div class="blood-pills">
+        <div class="blood-pill" onclick="selectBlood('A+', this)">A+</div>
+        <div class="blood-pill" onclick="selectBlood('A-', this)">A-</div>
+        <div class="blood-pill" onclick="selectBlood('B+', this)">B+</div>
+        <div class="blood-pill" onclick="selectBlood('B-', this)">B-</div>
+        <div class="blood-pill" onclick="selectBlood('AB+', this)">AB+</div>
+        <div class="blood-pill" onclick="selectBlood('AB-', this)">AB-</div>
+        <div class="blood-pill" onclick="selectBlood('O+', this)">O+</div>
+        <div class="blood-pill" onclick="selectBlood('O-', this)">O-</div>
+      </div>
+      <input type="hidden" id="bloodGroup"/>
+
+      <br/>
+
+      <!-- Section 3: Patient & Hospital Info -->
+      <div class="section-label">Step 3 — Patient & Hospital Details</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Patient Name *</label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-user"></i>
+            <input type="text" id="patientName" placeholder="e.g. Mohammad Alam"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Contact Phone *</label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-phone"></i>
+            <input type="tel" id="contactPhone" placeholder="e.g. 01700000000"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Hospital Name *</label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-hospital"></i>
+            <input type="text" id="hospitalName" placeholder="e.g. Dhaka Medical College"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>District *</label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-map-marker-alt"></i>
+            <select id="district">
+              <option value="">Select District</option>
+              <option>Dhaka</option><option>Chittagong</option>
+              <option>Rajshahi</option><option>Khulna</option>
+              <option>Sylhet</option><option>Barishal</option>
+              <option>Mymensingh</option><option>Rangpur</option>
+              <option>Narayanganj</option><option>Gazipur</option>
+              <option>Comilla</option><option>Bogra</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Units of Blood Needed</label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-tint"></i>
+            <input type="number" id="units" placeholder="e.g. 2" min="1" max="10"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Required By (Date & Time)</label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-calendar"></i>
+            <input type="datetime-local" id="requiredBy"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Additional Notes</label>
+        <div class="input-icon-wrap">
+          <i class="fas fa-comment"></i>
+          <textarea id="notes" rows="3"
+            placeholder="Any additional information for donors..."></textarea>
+        </div>
+      </div>
+
+      <!-- Broadcast Info -->
+      <div class="broadcast-info">
+        <i class="fas fa-info-circle"></i>
+        <div>
+          <strong>What happens when you submit?</strong><br/>
+          All active donors with compatible blood groups in your district will receive an
+          instant push notification. You can also search for donors manually on the
+          <a href="search.html" style="color:var(--red);">Find Blood</a> page.
+        </div>
+      </div>
+
+      <div style="margin-top:28px;">
+        <button class="btn btn-primary btn-block" onclick="submitRequest()" id="submitBtn"
+          style="font-size:17px; padding:18px;">
+          <i class="fas fa-broadcast-tower"></i> Send Emergency Broadcast
+        </button>
+      </div>
+
+      <div style="text-align:center; margin-top:16px;">
+        <a href="search.html" style="color:var(--gray); font-size:13px;">
+          Or search donors manually →
+        </a>
+      </div>
+
+    </div>
+    <!-- End Form Card -->
+
+    <!-- Success Screen -->
+    <div class="form-card success-screen" id="successScreen">
+      <div class="success-icon"><i class="fas fa-broadcast-tower"></i></div>
+      <h2 style="font-size:28px; margin-bottom:12px;">Broadcast Sent!</h2>
+      <p style="color:var(--gray); font-size:15px; line-height:1.8; margin-bottom:32px;">
+        Your emergency request has been broadcast to all compatible donors in
+        <strong id="successDistrict"></strong>.<br/>
+        Donors will contact you at <strong id="successPhone"></strong> shortly.
+      </p>
+      <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+        <a href="search.html" class="btn btn-primary">
+          <i class="fas fa-search"></i> Also Search Donors
+        </a>
+        <a href="index.html" class="btn btn-outline">
+          <i class="fas fa-home"></i> Back to Home
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let selectedUrgency = '';
+    let selectedBlood   = '';
+
+    function selectUrgency(level, el) {
+      document.querySelectorAll('.urgency-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedUrgency = level;
+      document.getElementById('urgencyLevel').value = level;
+    }
+
+    function selectBlood(group, el) {
+      document.querySelectorAll('.blood-pill').forEach(p => p.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedBlood = group;
+      document.getElementById('bloodGroup').value = group;
+    }
+
+    function showAlert(msg) {
+      const box = document.getElementById('alertBox');
+      box.className = 'alert-box alert-danger show';
+      box.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${msg}`;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return false;
+    }
+
+function submitRequest() {
+      if (!selectedUrgency)  return showAlert('Please select an urgency level.');
+      if (!selectedBlood)    return showAlert('Please select the required blood group.');
+      const patient  = document.getElementById('patientName').value.trim();
+      const phone    = document.getElementById('contactPhone').value.trim();
+      const hospital = document.getElementById('hospitalName').value.trim();
+      const district = document.getElementById('district').value;
+      if (!patient)  return showAlert('Please enter the patient name.');
+      if (phone.length < 11) return showAlert('Please enter a valid contact phone number.');
+      if (!hospital) return showAlert('Please enter the hospital name.');
+      if (!district) return showAlert('Please select your district.');
+
+      const btn = document.getElementById('submitBtn');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Broadcasting...';
+      btn.disabled  = true;
+
+      const formData = new URLSearchParams({
+        patient_name : patient,
+        contact_phone: phone,
+        blood_group  : selectedBlood,
+        hospital     : hospital,
+        district     : district,
+        urgency      : selectedUrgency,
+        units_needed : document.getElementById('units').value || 1,
+        required_by  : document.getElementById('requiredBy').value,
+        notes        : document.getElementById('notes').value.trim(),
+      });
+
+      fetch('php/emergency.php', {
+        method: 'POST',
+        body  : formData
+      })
+      .then(r => r.json())
+      .then(data => {
+        btn.innerHTML = '<i class="fas fa-broadcast-tower"></i> Send Emergency Broadcast';
+        btn.disabled  = false;
+        if (data.success) {
+          document.getElementById('formCard').style.display = 'none';
+          document.getElementById('successDistrict').innerText = district;
+          document.getElementById('successPhone').innerText    = phone;
+          document.getElementById('successScreen').classList.add('show');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          showAlert(data.message);
+        }
+      })
+      .catch(() => {
+        btn.innerHTML = '<i class="fas fa-broadcast-tower"></i> Send Emergency Broadcast';
+        btn.disabled  = false;
+        showAlert('Server error. Make sure XAMPP is running.');
+      });
+    }
+
+    // Pre-fill district from URL if coming from search page
+    window.addEventListener('load', () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('blood')) {
+        const b = params.get('blood');
+        document.querySelectorAll('.blood-pill').forEach(p => {
+          if (p.innerText === b) { p.classList.add('selected'); selectedBlood = b; }
+        });
+      }
+      // Set min datetime to now
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      document.getElementById('requiredBy').min = now.toISOString().slice(0,16);
+    });
+  </script>
+
+</body>
+</html>

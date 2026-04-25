@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin — Donors</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body { background: var(--light-gray); }
+    .main { max-width: 1200px; margin: 0 auto; padding: 36px 24px; }
+    .table-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .table-card-header {
+      padding: 20px 24px; border-bottom: 2px solid var(--light-gray);
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    .table-card-header h2 { font-size: 18px; display: flex; align-items: center; gap: 8px; }
+    .table-card-header h2 i { color: var(--red); }
+    .search-input {
+      padding: 8px 16px; border: 2px solid var(--border);
+      border-radius: 50px; font-size: 13px; outline: none; width: 220px;
+    }
+    .search-input:focus { border-color: var(--red); }
+    .admin-table { width: 100%; border-collapse: collapse; }
+    .admin-table thead th {
+      background: var(--red); color: white;
+      padding: 13px 16px; text-align: left; font-size: 13px;
+      font-family: 'Poppins', sans-serif;
+    }
+    .admin-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.2s; }
+    .admin-table tbody tr:hover { background: #fff5f5; }
+    .admin-table tbody td { padding: 13px 16px; font-size: 13px; vertical-align: middle; }
+    .donor-mini { display: flex; align-items: center; gap: 10px; }
+    .donor-mini-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--red); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; font-family: 'Poppins', sans-serif;
+    }
+    .donor-mini h4 { font-size: 14px; margin-bottom: 2px; }
+    .donor-mini p  { font-size: 12px; color: var(--gray); margin: 0; }
+    .filter-bar {
+      display: flex; gap: 12px; padding: 16px 24px;
+      background: var(--light-gray); flex-wrap: wrap; align-items: center;
+    }
+    .filter-bar select {
+      padding: 8px 14px; border: 2px solid var(--border);
+      border-radius: var(--radius-sm); font-size: 13px; outline: none;
+    }
+    .filter-bar select:focus { border-color: var(--red); }
+    .btn-sm-action {
+      border: none; padding: 6px 12px; border-radius: 50px;
+      font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-view    { background: #cce5ff; color: #004085; }
+    .btn-deact   { background: #fff3cd; color: #856404; }
+    .btn-delete  { background: #f8d7da; color: #721c24; }
+    .btn-view:hover   { background: #007bff; color: white; }
+    .btn-deact:hover  { background: var(--warning); color: white; }
+    .btn-delete:hover { background: var(--danger); color: white; }
+    .summary-bar {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 16px; margin-bottom: 24px;
+    }
+    .sum-card {
+      background: white; border-radius: var(--radius-sm);
+      box-shadow: var(--shadow); padding: 18px 20px;
+      border-left: 4px solid var(--red); text-align: center;
+    }
+    .sum-card h3 { font-size: 28px; color: var(--red); }
+    .sum-card p  { font-size: 12px; color: var(--gray); margin-top: 4px; }
+    .sum-card.green { border-left-color: var(--success); }
+    .sum-card.green h3 { color: var(--success); }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--black); color: white;
+      padding: 12px 20px; border-radius: var(--radius-sm);
+      font-size: 13px; display: none; z-index: 9999;
+    }
+    .toast.show { display: block; }
+    @media (max-width: 768px) {
+      .summary-bar { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="index.html" class="logo" style="text-decoration:none;">
+      <i class="fas fa-tint"></i>Blood<span>Link BD</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="admin-dashboard.html">
+        <i class="fas fa-th-large"></i> Dashboard
+      </a></li>
+      <li><a href="admin-requests.html">
+        <i class="fas fa-broadcast-tower"></i> Requests
+      </a></li>
+      <li><a href="index.html" style="color:var(--red);">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </a></li>
+    </ul>
+  </nav>
+
+  <div class="page-header">
+    <h1><i class="fas fa-users"></i> Donor Management</h1>
+    <p>View, verify, and manage all registered blood donors</p>
+  </div>
+
+  <div class="main">
+
+    <!-- Summary Bar -->
+    <div class="summary-bar">
+      <div class="sum-card">
+        <h3 id="totalCount">6</h3>
+        <p>Total Donors</p>
+      </div>
+      <div class="sum-card green">
+        <h3 id="activeCount">5</h3>
+        <p>Active Donors</p>
+      </div>
+      <div class="sum-card">
+        <h3 id="pendingCount">3</h3>
+        <p>Pending Approval</p>
+      </div>
+      <div class="sum-card">
+        <h3>4</h3>
+        <p>Districts Covered</p>
+      </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="table-card">
+      <div class="table-card-header">
+        <h2><i class="fas fa-users"></i> All Registered Donors</h2>
+        <input class="search-input" placeholder="🔍 Search by name, blood, district..."
+               oninput="filterTable(this.value)"/>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <select onchange="filterByBlood(this.value)">
+          <option value="">All Blood Groups</option>
+          <option>A+</option><option>A-</option>
+          <option>B+</option><option>B-</option>
+          <option>AB+</option><option>AB-</option>
+          <option>O+</option><option>O-</option>
+        </select>
+        <select onchange="filterByStatus(this.value)">
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+        <select onchange="filterByDistrict(this.value)">
+          <option value="">All Districts</option>
+          <option>Dhaka</option><option>Chittagong</option>
+          <option>Rajshahi</option><option>Sylhet</option>
+        </select>
+        <span style="font-size:13px; color:var(--gray); margin-left:auto;">
+          Showing <strong id="showCount">6</strong> donors
+        </span>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="admin-table" id="donorTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Donor</th>
+              <th>Blood</th>
+              <th>District</th>
+              <th>Phone</th>
+              <th>Donations</th>
+              <th>Status</th>
+              <th>Verified</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="donorBody">
+            <!-- Filled by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const donors = [
+      { id:1, name:'Mohammad Rahim',  blood:'A+',  district:'Dhaka',
+        phone:'01711-111111', donations:8,  active:true,  verified:true  },
+      { id:2, name:'Fatema Begum',    blood:'A+',  district:'Dhaka',
+        phone:'01722-222222', donations:3,  active:true,  verified:true  },
+      { id:3, name:'Karim Hossain',   blood:'B+',  district:'Dhaka',
+        phone:'01733-333333', donations:12, active:true,  verified:true  },
+      { id:4, name:'Sumaiya Khanam',  blood:'O+',  district:'Chittagong',
+        phone:'01744-444444', donations:5,  active:true,  verified:true  },
+      { id:5, name:'Rafiqul Islam',   blood:'O-',  district:'Dhaka',
+        phone:'01755-555555', donations:20, active:true,  verified:true  },
+      { id:6, name:'Nasrin Akter',    blood:'AB+', district:'Rajshahi',
+        phone:'01766-666666', donations:2,  active:false, verified:false },
+    ];
+
+    let filtered = [...donors];
+
+    function renderTable(list) {
+      const tbody = document.getElementById('donorBody');
+      tbody.innerHTML = list.map((d, i) => `
+        <tr id="row-${d.id}">
+          <td>${i + 1}</td>
+          <td>
+            <div class="donor-mini">
+              <div class="donor-mini-avatar">
+                ${d.name.split(' ').map(n=>n[0]).join('').slice(0,2)}
+              </div>
+              <div>
+                <h4>${d.name}</h4>
+                <p>${d.phone}</p>
+              </div>
+            </div>
+          </td>
+          <td><span class="blood-badge">${d.blood}</span></td>
+          <td>${d.district}</td>
+          <td>${d.phone}</td>
+          <td>${d.donations}</td>
+          <td>
+            <span class="status-badge ${d.active ? 'status-active' : 'status-inactive'}">
+              ${d.active ? 'Active' : 'Inactive'}
+            </span>
+          </td>
+          <td>
+            <span class="status-badge ${d.verified ? 'status-active' : 'status-pending'}">
+              ${d.verified ? '✓ Verified' : 'Pending'}
+            </span>
+          </td>
+          <td>
+            <div style="display:flex; gap:6px;">
+              <button class="btn-sm-action btn-view"
+                      onclick="showToast('👁 Viewing ${d.name}')">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn-sm-action btn-deact"
+                      onclick="toggleStatus(${d.id})">
+                <i class="fas fa-power-off"></i>
+              </button>
+              <button class="btn-sm-action btn-delete"
+                      onclick="deleteDonor(${d.id}, '${d.name}')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+      document.getElementById('showCount').innerText = list.length;
+    }
+
+    function filterTable(q) {
+      filtered = donors.filter(d =>
+        d.name.toLowerCase().includes(q.toLowerCase()) ||
+        d.blood.toLowerCase().includes(q.toLowerCase()) ||
+        d.district.toLowerCase().includes(q.toLowerCase())
+      );
+      renderTable(filtered);
+    }
+
+    function filterByBlood(b)    {
+      filtered = b ? donors.filter(d => d.blood === b) : [...donors];
+      renderTable(filtered);
+    }
+
+    function filterByStatus(s)   {
+      filtered = s ? donors.filter(d =>
+        s === 'active' ? d.active : !d.active) : [...donors];
+      renderTable(filtered);
+    }
+
+    function filterByDistrict(d) {
+      filtered = d ? donors.filter(x => x.district === d) : [...donors];
+      renderTable(filtered);
+    }
+
+    function toggleStatus(id) {
+      const d = donors.find(x => x.id === id);
+      if (d) {
+        d.active = !d.active;
+        renderTable(filtered);
+        showToast(d.active ? `✅ ${d.name} activated` : `⏸ ${d.name} deactivated`);
+      }
+    }
+
+    function deleteDonor(id, name) {
+      if (!confirm(`Remove ${name} from the system?`)) return;
+      const idx = donors.findIndex(d => d.id === id);
+      if (idx > -1) donors.splice(idx, 1);
+      filtered = [...donors];
+      renderTable(filtered);
+      document.getElementById('totalCount').innerText = donors.length;
+      showToast(`🗑 ${name} removed.`);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.innerText = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    window.addEventListener('load', () => renderTable(donors));
+  </script>
+
+</body>
+</html>

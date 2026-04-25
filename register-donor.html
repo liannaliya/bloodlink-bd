@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register as Donor — BloodLink BD</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body {
+      background: linear-gradient(135deg, #fff5f5 0%, #ffffff 50%, #ffe5e5 100%);
+      min-height: 100vh;
+    }
+
+    .register-wrapper {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    /* ---- Progress Bar ---- */
+    .progress-wrap {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px 36px;
+      margin-bottom: 30px;
+    }
+
+    .progress-steps {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .progress-steps::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 10%;
+      right: 10%;
+      height: 3px;
+      background: var(--border);
+      z-index: 0;
+    }
+
+    .progress-fill {
+      position: absolute;
+      top: 20px;
+      left: 10%;
+      height: 3px;
+      background: var(--red);
+      z-index: 1;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    .step-dot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 2;
+      cursor: default;
+    }
+
+    .step-dot .dot {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--gray);
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s;
+      border: 3px solid white;
+      box-shadow: 0 0 0 3px var(--border);
+    }
+
+    .step-dot.active .dot {
+      background: var(--red);
+      color: white;
+      box-shadow: 0 0 0 3px rgba(230,57,70,0.3);
+    }
+
+    .step-dot.done .dot {
+      background: var(--success);
+      color: white;
+      box-shadow: 0 0 0 3px rgba(46,204,113,0.3);
+    }
+
+    .step-dot span {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray);
+      text-align: center;
+    }
+
+    .step-dot.active span {
+      color: var(--red);
+    }
+
+    .step-dot.done span {
+      color: var(--success);
+    }
+
+    /* ---- Form Card ---- */
+    .form-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 44px 48px;
+    }
+
+    .form-card-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 36px;
+      padding-bottom: 24px;
+      border-bottom: 2px solid var(--light-gray);
+    }
+
+    .form-card-icon {
+      width: 56px;
+      height: 56px;
+      background: #fff0f0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: var(--red);
+      flex-shrink: 0;
+    }
+
+    .form-card-header h2 {
+      font-size: 22px;
+      color: var(--black);
+      margin-bottom: 4px;
+    }
+
+    .form-card-header p {
+      font-size: 13px;
+      color: var(--gray);
+    }
+
+    /* ---- Step Panels ---- */
+    .step-panel {
+      display: none;
+    }
+
+    .step-panel.active {
+      display: block;
+    }
+
+    /* ---- Blood Group Selector ---- */
+    .blood-selector {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .blood-option {
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .blood-option:hover {
+      border-color: var(--red);
+      background: #fff5f5;
+    }
+
+    .blood-option.selected {
+      border-color: var(--red);
+      background: var(--red);
+      color: white;
+    }
+
+    .blood-option h4 {
+      font-size: 20px;
+      color: var(--red);
+      margin-bottom: 2px;
+    }
+
+    .blood-option.selected h4 {
+      color: white;
+    }
+
+    .blood-option p {
+      font-size: 11px;
+      color: var(--gray);
+    }
+
+    .blood-option.selected p {
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* ---- Input with Icon ---- */
+    .input-icon-wrap {
+      position: relative;
+    }
+
+    .input-icon-wrap i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+      font-size: 15px;
+      pointer-events: none;
+    }
+
+    .input-icon-wrap input,
+    .input-icon-wrap select {
+      padding-left: 44px !important;
+    }
+
+    /* ---- Eligibility Info Box ---- */
+    .eligibility-box {
+      background: #fff5f5;
+      border: 2px solid #ffcccc;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .eligibility-box.show {
+      display: block;
+    }
+
+    .eligibility-box p {
+      font-size: 13px;
+      color: var(--black);
+    }
+
+    .eligibility-box .eligible {
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    .eligibility-box .not-eligible {
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    /* ---- Medical Checklist ---- */
+    .checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .check-item:hover {
+      border-color: var(--red);
+      background: #fff5f5;
+    }
+
+    .check-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--red);
+      margin-top: 2px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .check-item label {
+      font-size: 14px;
+      color: var(--black);
+      cursor: pointer;
+      line-height: 1.5;
+    }
+
+    .check-item label span {
+      display: block;
+      font-size: 12px;
+      color: var(--gray);
+      margin-top: 2px;
+    }
+
+    /* ---- Review Box ---- */
+    .review-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .review-item {
+      background: var(--light-gray);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+    }
+
+    .review-item label {
+      font-size: 12px;
+      color: var(--gray);
+      font-weight: 600;
+      display: block;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .review-item p {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--black);
+    }
+
+    .review-blood-badge {
+      display: inline-block;
+      background: var(--red);
+      color: white;
+      padding: 4px 16px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    /* ---- Navigation Buttons ---- */
+    .form-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 36px;
+      padding-top: 24px;
+      border-top: 2px solid var(--light-gray);
+    }
+
+    /* ---- Success Screen ---- */
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 60px 40px;
+    }
+
+    .success-screen.show {
+      display: block;
+    }
+
+    .success-icon {
+      width: 100px;
+      height: 100px;
+      background: #d4edda;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 44px;
+      color: var(--success);
+      animation: popIn 0.5s ease;
+    }
+
+    @keyframes popIn {
+      0%   { transform: scale(0); opacity: 0; }
+      70%  { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .success-screen h2 {
+      font-size: 30px;
+      margin-bottom: 12px;
+      color: var(--black);
+    }
+
+    .success-screen p {
+      font-size: 15px;
+      color: var(--gray);
+      margin-bottom: 32px;
+      line-height: 1.8;
+    }
+
+    .success-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ---- Alert ---- */
+    .alert-box {
+      display: none;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .alert-box.show { display: block; }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 768px) {
+      .form-card { padding: 28px 20px; }
+      .form-row  { grid-template-columns: 1fr; }
+      .blood-selector { grid-template-columns: repeat(4, 1fr); }
+      .review-grid { grid-template-columns: 1fr; }
+      .progress-wrap { padding: 20px; }
+    }
+
+    @media (max-width: 480px) {
+      .blood-selector { grid-template-columns: repeat(4, 1fr); }
+      .step-dot span  { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="index.html" class="logo" style="text-decoration:none;">
+      <i class="fas fa-tint"></i>
+      Blood<span>Link BD</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="search.html">Find Blood</a></li>
+      <li><a href="login.html">Login</a></li>
+    </ul>
+  </nav>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1><i class="fas fa-user-plus"></i> Become a Blood Donor</h1>
+    <p>Join thousands of heroes saving lives across Bangladesh</p>
+  </div>
+
+  <!-- Register Wrapper -->
+  <div class="register-wrapper">
+
+    <!-- Progress Bar -->
+    <div class="progress-wrap">
+      <div class="progress-steps">
+        <div class="progress-fill" id="progressFill"></div>
+        <div class="step-dot active" id="stepDot1">
+          <div class="dot">1</div>
+          <span>Personal Info</span>
+        </div>
+        <div class="step-dot" id="stepDot2">
+          <div class="dot">2</div>
+          <span>Blood & Location</span>
+        </div>
+        <div class="step-dot" id="stepDot3">
+          <div class="dot">3</div>
+          <span>Medical History</span>
+        </div>
+        <div class="step-dot" id="stepDot4">
+          <div class="dot">4</div>
+          <span>Review & Submit</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="form-card" id="formCard">
+
+      <!-- Alert -->
+      <div class="alert-box alert-danger" id="alertBox"></div>
+
+      <!-- ===== STEP 1 — Personal Info ===== -->
+      <div class="step-panel active" id="step1">
+        <div class="form-card-header">
+          <div class="form-card-icon">
+            <i class="fas fa-user"></i>
+          </div>
+          <div>
+            <h2>Personal Information</h2>
+            <p>Tell us about yourself so we can create your donor profile</p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fas fa-user" style="color:var(--red)"></i> Full Name *</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-user"></i>
+              <input type="text" id="fullName" placeholder="e.g. Mohammad Rahim"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-phone" style="color:var(--red)"></i> Phone Number *</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-phone"></i>
+              <input type="tel" id="phone" placeholder="e.g. 01700000000"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fas fa-envelope" style="color:var(--red)"></i> Email Address</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-envelope"></i>
+              <input type="email" id="email" placeholder="e.g. rahim@email.com"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-birthday-cake" style="color:var(--red)"></i> Date of Birth *</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-calendar"></i>
+              <input type="date" id="dob" onchange="checkAge()"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fas fa-venus-mars" style="color:var(--red)"></i> Gender *</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-venus-mars"></i>
+              <select id="gender">
+                <option value="">Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-weight" style="color:var(--red)"></i> Weight (kg) *</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-weight"></i>
+              <input type="number" id="weight" placeholder="e.g. 60" min="45" max="200"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fas fa-lock" style="color:var(--red)"></i> Password *</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="password" placeholder="Minimum 6 characters"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-lock" style="color:var(--red)"></i> Confirm Password *</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="confirmPassword" placeholder="Re-enter password"/>
+            </div>
+          </div>
+        </div>
+
+        <div id="ageWarning" class="alert-box alert-warning" style="margin-top:0;"></div>
+
+        <div class="form-nav">
+          <div></div>
+          <button class="btn btn-primary" onclick="nextStep(1)">
+            Next — Blood & Location <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ===== STEP 2 — Blood Group & Location ===== -->
+      <div class="step-panel" id="step2">
+        <div class="form-card-header">
+          <div class="form-card-icon">
+            <i class="fas fa-tint"></i>
+          </div>
+          <div>
+            <h2>Blood Group & Location</h2>
+            <p>This information helps us match you with nearby blood seekers</p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label><i class="fas fa-tint" style="color:var(--red)"></i> Select Your Blood Group *</label>
+          <div class="blood-selector" id="bloodSelector">
+            <div class="blood-option" onclick="selectBlood('A+', this)">
+              <h4>A+</h4><p>A Positive</p>
+            </div>
+            <div class="blood-option" onclick="selectBlood('A-', this)">
+              <h4>A-</h4><p>A Negative</p>
+            </div>
+            <div class="blood-option" onclick="selectBlood('B+', this)">
+              <h4>B+</h4><p>B Positive</p>
+            </div>
+            <div class="blood-option" onclick="selectBlood('B-', this)">
+              <h4>B-</h4><p>B Negative</p>
+            </div>
+            <div class="blood-option" onclick="selectBlood('AB+', this)">
+              <h4>AB+</h4><p>AB Positive</p>
+            </div>
+            <div class="blood-option" onclick="selectBlood('AB-', this)">
+              <h4>AB-</h4><p>AB Negative</p>
+            </div>
+            <div class="blood-option" onclick="selectBlood('O+', this)">
+              <h4>O+</h4><p>O Positive</p>
+            </div>
+            <div class="blood-option" onclick="selectBlood('O-', this)">
+              <h4>O-</h4><p>Universal</p>
+            </div>
+          </div>
+          <input type="hidden" id="bloodGroup"/>
+        </div>
+
+        <div class="form-row" style="margin-top:28px;">
+          <div class="form-group">
+            <label><i class="fas fa-city" style="color:var(--red)"></i> District *</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-city"></i>
+              <select id="district">
+                <option value="">Select District</option>
+                <option>Dhaka</option>
+                <option>Chittagong</option>
+                <option>Rajshahi</option>
+                <option>Khulna</option>
+                <option>Sylhet</option>
+                <option>Barishal</option>
+                <option>Mymensingh</option>
+                <option>Rangpur</option>
+                <option>Narayanganj</option>
+                <option>Gazipur</option>
+                <option>Comilla</option>
+                <option>Bogra</option>
+                <option>Dinajpur</option>
+                <option>Jessore</option>
+                <option>Noakhali</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-map-marker-alt" style="color:var(--red)"></i> Upazila / Area *</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-map-marker-alt"></i>
+              <input type="text" id="area" placeholder="e.g. Mirpur, Gulshan"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label><i class="fas fa-home" style="color:var(--red)"></i> Full Address</label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-home"></i>
+            <input type="text" id="address" placeholder="House no, Road, Area"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label><i class="fas fa-calendar-minus" style="color:var(--red)"></i> Last Donation Date</label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-calendar"></i>
+            <input type="date" id="lastDonation" onchange="calcEligibility()"/>
+          </div>
+          <div class="eligibility-box" id="eligibilityBox">
+            <p id="eligibilityText"></p>
+          </div>
+        </div>
+
+        <div class="form-nav">
+          <button class="btn btn-outline" onclick="prevStep(2)">
+            <i class="fas fa-arrow-left"></i> Back
+          </button>
+          <button class="btn btn-primary" onclick="nextStep(2)">
+            Next — Medical History <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ===== STEP 3 — Medical History ===== -->
+      <div class="step-panel" id="step3">
+        <div class="form-card-header">
+          <div class="form-card-icon">
+            <i class="fas fa-notes-medical"></i>
+          </div>
+          <div>
+            <h2>Medical History</h2>
+            <p>Check all conditions that apply — this ensures safe donation</p>
+          </div>
+        </div>
+
+        <div class="alert alert-warning">
+          <i class="fas fa-exclamation-triangle"></i>
+          <strong>Important:</strong> Please answer honestly. This protects both you and the blood recipient.
+        </div>
+
+        <p style="font-size:14px; color:var(--gray); margin-bottom:20px; margin-top:16px;">
+          Do you currently have or have you recently had any of the following?
+        </p>
+
+        <div class="checklist">
+          <div class="check-item">
+            <input type="checkbox" id="cond1"/>
+            <label for="cond1">
+              Diabetes (Type 1 or Type 2)
+              <span>Controlled diabetes may still allow donation — admin will verify</span>
+            </label>
+          </div>
+          <div class="check-item">
+            <input type="checkbox" id="cond2"/>
+            <label for="cond2">
+              Heart Disease or Blood Pressure Issues
+              <span>Hypertension or cardiac conditions may affect eligibility</span>
+            </label>
+          </div>
+          <div class="check-item">
+            <input type="checkbox" id="cond3"/>
+            <label for="cond3">
+              HIV / AIDS or Hepatitis B / C
+              <span>Donors with these conditions cannot donate blood</span>
+            </label>
+          </div>
+          <div class="check-item">
+            <input type="checkbox" id="cond4"/>
+            <label for="cond4">
+              Currently Taking Antibiotics or Blood Thinners
+              <span>Temporary deferral may apply based on medication type</span>
+            </label>
+          </div>
+          <div class="check-item">
+            <input type="checkbox" id="cond5"/>
+            <label for="cond5">
+              Fever, Cold, or Infection in Last 2 Weeks
+              <span>Active infections temporarily disqualify donation</span>
+            </label>
+          </div>
+          <div class="check-item">
+            <input type="checkbox" id="cond6"/>
+            <label for="cond6">
+              Pregnancy or Breastfeeding (for female donors)
+              <span>Donation not recommended during or shortly after pregnancy</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top:28px;">
+          <label>Any Other Medical Conditions or Notes</label>
+          <textarea id="medNotes" placeholder="Describe any other relevant medical conditions or medications..."></textarea>
+        </div>
+
+        <div class="form-nav">
+          <button class="btn btn-outline" onclick="prevStep(3)">
+            <i class="fas fa-arrow-left"></i> Back
+          </button>
+          <button class="btn btn-primary" onclick="nextStep(3)">
+            Next — Review & Submit <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ===== STEP 4 — Review & Submit ===== -->
+      <div class="step-panel" id="step4">
+        <div class="form-card-header">
+          <div class="form-card-icon">
+            <i class="fas fa-clipboard-check"></i>
+          </div>
+          <div>
+            <h2>Review Your Information</h2>
+            <p>Please review before submitting your donor registration</p>
+          </div>
+        </div>
+
+        <div class="review-grid" id="reviewGrid">
+          <!-- Filled by JS -->
+        </div>
+
+        <div class="form-group" style="margin-top:28px;">
+          <div class="check-item">
+            <input type="checkbox" id="agreeTerms"/>
+            <label for="agreeTerms">
+              I agree to the Terms & Conditions and Privacy Policy
+              <span>I confirm all information provided is accurate and truthful</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="check-item">
+            <input type="checkbox" id="agreeNotify"/>
+            <label for="agreeNotify">
+              I agree to receive emergency blood request notifications
+              <span>You can turn this off anytime from your donor profile</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-nav">
+          <button class="btn btn-outline" onclick="prevStep(4)">
+            <i class="fas fa-arrow-left"></i> Back
+          </button>
+          <button class="btn btn-primary" onclick="submitForm()" id="submitBtn">
+            <i class="fas fa-paper-plane"></i> Submit Registration
+          </button>
+        </div>
+      </div>
+
+    </div>
+    <!-- End Form Card -->
+
+    <!-- Success Screen -->
+    <div class="form-card success-screen" id="successScreen">
+      <div class="success-icon">
+        <i class="fas fa-check"></i>
+      </div>
+      <h2>Registration Submitted!</h2>
+      <p>
+        Thank you for registering as a blood donor on BloodLink BD.<br/>
+        Your profile is currently <strong>pending admin verification</strong>.<br/>
+        You will be notified once your account is approved.
+      </p>
+      <div class="success-actions">
+        <a href="login.html" class="btn btn-primary">
+          <i class="fas fa-sign-in-alt"></i> Go to Login
+        </a>
+        <a href="index.html" class="btn btn-outline">
+          <i class="fas fa-home"></i> Back to Home
+        </a>
+      </div>
+    </div>
+
+  </div>
+  <!-- End Wrapper -->
+
+  <script>
+    let currentStep = 1;
+    let selectedBlood = '';
+
+    // ---- Blood Group Selection ----
+    function selectBlood(group, el) {
+      document.querySelectorAll('.blood-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedBlood = group;
+      document.getElementById('bloodGroup').value = group;
+    }
+
+    // ---- Age Check ----
+    function checkAge() {
+      const dob = new Date(document.getElementById('dob').value);
+      const today = new Date();
+      const age = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
+      const warn = document.getElementById('ageWarning');
+      if (age < 18) {
+        warn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> You must be at least 18 years old to donate blood.';
+        warn.classList.add('show');
+      } else if (age > 60) {
+        warn.innerHTML = '<i class="fas fa-info-circle"></i> Donors above 60 require additional medical clearance.';
+        warn.classList.add('show');
+      } else {
+        warn.classList.remove('show');
+      }
+    }
+
+    // ---- Eligibility Calculator ----
+    function calcEligibility() {
+      const lastDate = new Date(document.getElementById('lastDonation').value);
+      const nextDate = new Date(lastDate);
+      nextDate.setDate(nextDate.getDate() + 90);
+      const today = new Date();
+      const box  = document.getElementById('eligibilityBox');
+      const text = document.getElementById('eligibilityText');
+      const nextStr = nextDate.toLocaleDateString('en-BD', {
+        day:'numeric', month:'long', year:'numeric'
+      });
+      if (today >= nextDate) {
+        text.innerHTML = `✅ <span class="eligible">You are eligible to donate now!</span> Your next eligible date was ${nextStr}.`;
+      } else {
+        text.innerHTML = `⏳ <span class="not-eligible">Not yet eligible.</span> Your next eligible donation date is <strong>${nextStr}</strong>.`;
+      }
+      box.classList.add('show');
+    }
+
+    // ---- Progress Bar Update ----
+    function updateProgress(step) {
+      const fills = [0, 0, 33, 66, 100];
+      document.getElementById('progressFill').style.width = fills[step] + '%';
+      for (let i = 1; i <= 4; i++) {
+        const dot = document.getElementById('stepDot' + i);
+        dot.classList.remove('active', 'done');
+        if (i < step)  dot.classList.add('done');
+        if (i === step) dot.classList.add('active');
+      }
+    }
+
+    // ---- Validation ----
+    function validateStep(step) {
+      hideAlert();
+      if (step === 1) {
+        const name  = document.getElementById('fullName').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const dob   = document.getElementById('dob').value;
+        const gen   = document.getElementById('gender').value;
+        const wt    = document.getElementById('weight').value;
+        const pass  = document.getElementById('password').value;
+        const conf  = document.getElementById('confirmPassword').value;
+        if (!name)          return showAlert('Please enter your full name.');
+        if (phone.length < 11) return showAlert('Please enter a valid phone number.');
+        if (!dob)           return showAlert('Please enter your date of birth.');
+        if (!gen)           return showAlert('Please select your gender.');
+        if (!wt || wt < 45) return showAlert('Minimum weight to donate is 45 kg.');
+        if (pass.length < 6) return showAlert('Password must be at least 6 characters.');
+        if (pass !== conf)  return showAlert('Passwords do not match.');
+        return true;
+      }
+      if (step === 2) {
+        if (!selectedBlood)
+          return showAlert('Please select your blood group.');
+        if (!document.getElementById('district').value)
+          return showAlert('Please select your district.');
+        if (!document.getElementById('area').value.trim())
+          return showAlert('Please enter your upazila or area.');
+        return true;
+      }
+      if (step === 3) return true;
+      if (step === 4) {
+        if (!document.getElementById('agreeTerms').checked)
+          return showAlert('Please agree to the Terms & Conditions.');
+        if (!document.getElementById('agreeNotify').checked)
+          return showAlert('Please agree to receive emergency notifications.');
+        return true;
+      }
+    }
+
+    // ---- Next Step ----
+    function nextStep(from) {
+      if (!validateStep(from)) return;
+      document.getElementById('step' + from).classList.remove('active');
+      currentStep = from + 1;
+      document.getElementById('step' + currentStep).classList.add('active');
+      updateProgress(currentStep);
+      if (currentStep === 4) buildReview();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ---- Prev Step ----
+    function prevStep(from) {
+      document.getElementById('step' + from).classList.remove('active');
+      currentStep = from - 1;
+      document.getElementById('step' + currentStep).classList.add('active');
+      updateProgress(currentStep);
+      hideAlert();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ---- Build Review ----
+    function buildReview() {
+      const lastDon = document.getElementById('lastDonation').value;
+      const nextElig = lastDon ? (() => {
+        const d = new Date(lastDon);
+        d.setDate(d.getDate() + 90);
+        return d.toLocaleDateString('en-BD');
+      })() : 'First time donor';
+
+      document.getElementById('reviewGrid').innerHTML = `
+        <div class="review-item">
+          <label>Full Name</label>
+          <p>${document.getElementById('fullName').value}</p>
+        </div>
+        <div class="review-item">
+          <label>Phone Number</label>
+          <p>${document.getElementById('phone').value}</p>
+        </div>
+        <div class="review-item">
+          <label>Blood Group</label>
+          <p><span class="review-blood-badge">${selectedBlood}</span></p>
+        </div>
+        <div class="review-item">
+          <label>Gender</label>
+          <p>${document.getElementById('gender').value}</p>
+        </div>
+        <div class="review-item">
+          <label>District</label>
+          <p>${document.getElementById('district').value}</p>
+        </div>
+        <div class="review-item">
+          <label>Area</label>
+          <p>${document.getElementById('area').value}</p>
+        </div>
+        <div class="review-item">
+          <label>Weight</label>
+          <p>${document.getElementById('weight').value} kg</p>
+        </div>
+        <div class="review-item">
+          <label>Next Eligible Donation</label>
+          <p>${nextElig}</p>
+        </div>
+      `;
+    }
+
+    // ---- Submit Form ----
+function submitForm() {
+  if (!validateStep(4)) return;
+  const btn = document.getElementById('submitBtn');
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+  btn.disabled  = true;
+
+  const formData = new URLSearchParams({
+    full_name    : document.getElementById('fullName').value.trim(),
+    phone        : document.getElementById('phone').value.trim(),
+    email        : document.getElementById('email').value.trim(),
+    password     : document.getElementById('password').value,
+    blood_group  : selectedBlood,
+    gender       : document.getElementById('gender').value,
+    dob          : document.getElementById('dob').value,
+    weight       : document.getElementById('weight').value,
+    district     : document.getElementById('district').value,
+    area         : document.getElementById('area').value.trim(),
+    address      : document.getElementById('address').value.trim(),
+    last_donation: document.getElementById('lastDonation').value,
+    med_notes    : document.getElementById('medNotes').value.trim(),
+  });
+
+  fetch('php/register.php', {
+    method : 'POST',
+    body   : formData
+  })
+  .then(r => r.json())
+  .then(data => {
+    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Registration';
+    btn.disabled  = false;
+    if (data.success) {
+      document.getElementById('formCard').style.display      = 'none';
+      document.getElementById('successScreen').classList.add('show');
+      document.querySelector('.progress-wrap').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      showAlert(data.message);
+    }
+  })
+  .catch(() => {
+    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Registration';
+    btn.disabled  = false;
+    showAlert('Server error. Make sure XAMPP is running.');
+  });
+}
+
+    // ---- Alert Helpers ----
+    function showAlert(msg) {
+      const box = document.getElementById('alertBox');
+      box.className = 'alert-box alert-danger show';
+      box.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${msg}`;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return false;
+    }
+
+    function hideAlert() {
+      const box = document.getElementById('alertBox');
+      box.classList.remove('show');
+    }
+
+    // Set max date for DOB and last donation
+    window.addEventListener('load', () => {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('dob').max          = today;
+      document.getElementById('lastDonation').max  = today;
+    });
+  </script>
+
+</body>
+</html>

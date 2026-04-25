@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Find Blood — BloodLink BD</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body { background: var(--light-gray); }
+
+    .search-layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 28px;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 36px 24px 60px;
+    }
+
+    /* ---- Search Panel ---- */
+    .search-panel {
+      position: sticky;
+      top: 90px;
+      height: fit-content;
+    }
+
+    .search-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .search-card-header {
+      background: linear-gradient(135deg, var(--red), var(--red-dark));
+      color: white;
+      padding: 24px 28px;
+    }
+
+    .search-card-header h3 {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .search-card-header p {
+      font-size: 13px;
+      opacity: 0.85;
+    }
+
+    .search-card-body {
+      padding: 28px;
+    }
+
+    /* ---- Blood Group Pills ---- */
+    .blood-pills {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .blood-pill {
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 4px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--red);
+      background: white;
+    }
+
+    .blood-pill:hover {
+      border-color: var(--red);
+      background: #fff5f5;
+    }
+
+    .blood-pill.selected {
+      background: var(--red);
+      color: white;
+      border-color: var(--red);
+      box-shadow: 0 4px 12px rgba(230,57,70,0.35);
+    }
+
+    /* ---- Range Slider ---- */
+    .range-slider {
+      width: 100%;
+      accent-color: var(--red);
+      height: 6px;
+      cursor: pointer;
+    }
+
+    .range-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--gray);
+      margin-top: 6px;
+    }
+
+    /* ---- Filter Toggles ---- */
+    .filter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .filter-row:last-child { border-bottom: none; }
+
+    /* ---- Results Panel ---- */
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .results-header h2 {
+      font-size: 22px;
+      color: var(--black);
+    }
+
+    .results-count {
+      background: var(--red);
+      color: white;
+      padding: 4px 14px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .sort-select {
+      padding: 8px 16px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--black);
+      background: white;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .sort-select:focus { border-color: var(--red); }
+
+    /* ---- AI Suggestion Box ---- */
+    .ai-box {
+      background: linear-gradient(135deg, #fff0f0, #fff5f5);
+      border: 2px solid #ffcccc;
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .ai-box.show { display: block; }
+
+    .ai-box-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .ai-box-header i {
+      font-size: 20px;
+      color: var(--red);
+    }
+
+    .ai-box-header h4 {
+      font-size: 15px;
+      color: var(--black);
+    }
+
+    .ai-box-header span {
+      background: var(--red);
+      color: white;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .ai-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .ai-pill {
+      background: var(--red);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .ai-pill:hover {
+      background: var(--red-dark);
+      transform: translateY(-2px);
+    }
+
+    .ai-box p {
+      font-size: 13px;
+      color: var(--gray);
+      margin-bottom: 12px;
+    }
+
+    /* ---- Donor Cards ---- */
+    .donors-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .donor-result-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 20px;
+      align-items: center;
+      transition: all 0.3s;
+      border-left: 4px solid transparent;
+    }
+
+    .donor-result-card:hover {
+      border-left-color: var(--red);
+      transform: translateX(4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .donor-result-card.compatible {
+      border-left-color: var(--success);
+    }
+
+    .donor-avatar-lg {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--red), var(--red-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 26px;
+      font-weight: 800;
+      font-family: 'Poppins', sans-serif;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(230,57,70,0.3);
+    }
+
+    .donor-result-info h3 {
+      font-size: 17px;
+      margin-bottom: 6px;
+      color: var(--black);
+    }
+
+    .donor-meta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .donor-meta span {
+      font-size: 13px;
+      color: var(--gray);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .donor-meta span i {
+      color: var(--red);
+      font-size: 12px;
+    }
+
+    .donor-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 50px;
+      font-weight: 600;
+    }
+
+    .tag-verified {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .tag-eligible {
+      background: #cce5ff;
+      color: #004085;
+    }
+
+    .tag-compatible {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .donor-result-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .blood-badge-lg {
+      background: var(--red);
+      color: white;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      font-family: 'Poppins', sans-serif;
+      margin-bottom: 8px;
+    }
+
+    /* ---- Empty State ---- */
+    .empty-state {
+      text-align: center;
+      padding: 80px 40px;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: none;
+    }
+
+    .empty-state.show { display: block; }
+
+    .empty-state i {
+      font-size: 64px;
+      color: #ffcccc;
+      margin-bottom: 20px;
+    }
+
+    .empty-state h3 {
+      font-size: 22px;
+      margin-bottom: 10px;
+      color: var(--black);
+    }
+
+    .empty-state p {
+      font-size: 14px;
+      color: var(--gray);
+      margin-bottom: 24px;
+    }
+
+    /* ---- Loading ---- */
+    .loading-state {
+      text-align: center;
+      padding: 60px;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: none;
+    }
+
+    .loading-state.show { display: block; }
+
+    .loading-state p {
+      color: var(--gray);
+      margin-top: 16px;
+      font-size: 14px;
+    }
+
+    /* ---- Contact Modal ---- */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-box {
+      background: white;
+      border-radius: var(--radius);
+      padding: 40px;
+      max-width: 480px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .modal-box .modal-icon {
+      width: 72px;
+      height: 72px;
+      background: #fff0f0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 28px;
+      color: var(--red);
+    }
+
+    .modal-box h3 { font-size: 22px; margin-bottom: 8px; }
+    .modal-box p  { font-size: 14px; color: var(--gray); margin-bottom: 24px; }
+
+    .modal-contact-info {
+      background: var(--light-gray);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .modal-contact-info p {
+      margin: 0;
+      font-size: 15px;
+      color: var(--black);
+      font-weight: 600;
+    }
+
+    .modal-contact-info span {
+      font-size: 13px;
+      color: var(--gray);
+      font-weight: 400;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 1024px) {
+      .search-layout {
+        grid-template-columns: 300px 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .search-layout {
+        grid-template-columns: 1fr;
+      }
+      .search-panel {
+        position: static;
+      }
+      .donor-result-card {
+        grid-template-columns: auto 1fr;
+      }
+      .donor-result-actions {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="index.html" class="logo" style="text-decoration:none;">
+      <i class="fas fa-tint"></i>Blood<span>Link BD</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="search.html" style="color:var(--red)">Find Blood</a></li>
+      <li><a href="emergency-request.html">Emergency</a></li>
+      <li><a href="register-donor.html" class="btn-nav">Become a Donor</a></li>
+      <li><a href="login.html">Login</a></li>
+    </ul>
+  </nav>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1><i class="fas fa-search"></i> Find Blood Donors</h1>
+    <p>Search for compatible donors near you — powered by AI matching</p>
+  </div>
+
+  <!-- Search Layout -->
+  <div class="search-layout">
+
+    <!-- ===== LEFT: Search Panel ===== -->
+    <div class="search-panel">
+      <div class="search-card">
+        <div class="search-card-header">
+          <h3><i class="fas fa-filter"></i> Search Filters</h3>
+          <p>Narrow down donors by blood group and location</p>
+        </div>
+        <div class="search-card-body">
+
+          <!-- Blood Group -->
+          <div class="form-group">
+            <label style="font-size:13px; font-weight:700; text-transform:uppercase;
+                          letter-spacing:0.5px; color:var(--gray); margin-bottom:12px;">
+              Blood Group Needed
+            </label>
+            <div class="blood-pills">
+              <div class="blood-pill" onclick="selectBloodPill('A+',this)">A+</div>
+              <div class="blood-pill" onclick="selectBloodPill('A-',this)">A-</div>
+              <div class="blood-pill" onclick="selectBloodPill('B+',this)">B+</div>
+              <div class="blood-pill" onclick="selectBloodPill('B-',this)">B-</div>
+              <div class="blood-pill" onclick="selectBloodPill('AB+',this)">AB+</div>
+              <div class="blood-pill" onclick="selectBloodPill('AB-',this)">AB-</div>
+              <div class="blood-pill" onclick="selectBloodPill('O+',this)">O+</div>
+              <div class="blood-pill" onclick="selectBloodPill('O-',this)">O-</div>
+            </div>
+            <input type="hidden" id="selectedBlood"/>
+          </div>
+
+          <!-- District -->
+          <div class="form-group">
+            <label style="font-size:13px; font-weight:700; text-transform:uppercase;
+                          letter-spacing:0.5px; color:var(--gray);">
+              District
+            </label>
+            <select id="districtFilter" class="sort-select" style="width:100%; margin-top:8px;">
+              <option value="">All Districts</option>
+              <option>Dhaka</option>
+              <option>Chittagong</option>
+              <option>Rajshahi</option>
+              <option>Khulna</option>
+              <option>Sylhet</option>
+              <option>Barishal</option>
+              <option>Mymensingh</option>
+              <option>Rangpur</option>
+              <option>Narayanganj</option>
+              <option>Gazipur</option>
+              <option>Comilla</option>
+              <option>Bogra</option>
+              <option>Dinajpur</option>
+            </select>
+          </div>
+
+          <!-- Distance Slider -->
+          <div class="form-group">
+            <label style="font-size:13px; font-weight:700; text-transform:uppercase;
+                          letter-spacing:0.5px; color:var(--gray);">
+              Max Distance: <span id="distanceVal" style="color:var(--red)">20 km</span>
+            </label>
+            <input type="range" class="range-slider" min="1" max="100"
+                   value="20" id="distanceRange"
+                   oninput="document.getElementById('distanceVal').innerText = this.value + ' km'"/>
+            <div class="range-label"><span>1 km</span><span>100 km</span></div>
+          </div>
+
+          <!-- Filters -->
+          <div class="form-group">
+            <label style="font-size:13px; font-weight:700; text-transform:uppercase;
+                          letter-spacing:0.5px; color:var(--gray); margin-bottom:8px;">
+              Filters
+            </label>
+            <div class="filter-row">
+              <span><i class="fas fa-check-circle" style="color:var(--success)"></i>
+                    Active donors only</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="activeOnly" checked/>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="filter-row">
+              <span><i class="fas fa-shield-alt" style="color:var(--red)"></i>
+                    Verified donors only</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="verifiedOnly" checked/>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="filter-row">
+              <span><i class="fas fa-calendar-check" style="color:var(--warning)"></i>
+                    Eligible to donate</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="eligibleOnly"/>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-block" onclick="runSearch()">
+            <i class="fas fa-search"></i> Search Donors
+          </button>
+
+          <div style="margin-top:12px;">
+            <button class="btn btn-outline btn-block btn-sm" onclick="useMyLocation()">
+              <i class="fas fa-map-marker-alt"></i> Use My Location
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- End Search Panel -->
+
+    <!-- ===== RIGHT: Results Panel ===== -->
+    <div class="results-panel">
+
+      <!-- Results Header -->
+      <div class="results-header">
+        <div>
+          <h2>Donor Results</h2>
+          <p style="font-size:13px; color:var(--gray); margin-top:4px;"
+             id="resultsSubtitle">Select a blood group to begin searching</p>
+        </div>
+        <div style="display:flex; gap:12px; align-items:center;">
+          <span class="results-count" id="resultsCount">0 found</span>
+          <select class="sort-select" id="sortSelect" onchange="sortResults()">
+            <option value="distance">Sort: Nearest First</option>
+            <option value="name">Sort: Name A–Z</option>
+            <option value="donations">Sort: Most Donations</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- AI Suggestion Box -->
+      <div class="ai-box" id="aiBox">
+        <div class="ai-box-header">
+          <i class="fas fa-robot"></i>
+          <h4>AI Compatibility Suggestion</h4>
+          <span>AI POWERED</span>
+        </div>
+        <p id="aiBoxText"></p>
+        <div class="ai-pills" id="aiPills"></div>
+      </div>
+
+      <!-- Loading State -->
+      <div class="loading-state" id="loadingState">
+        <div class="spinner"></div>
+        <p>Searching for donors near you...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState">
+        <i class="fas fa-heartbeat"></i>
+        <h3>No Donors Found</h3>
+        <p>No exact match donors found in your area.<br/>
+           Check our AI suggestions above or try a different district.</p>
+        <a href="emergency-request.html" class="btn btn-primary">
+          <i class="fas fa-broadcast-tower"></i> Send Emergency Broadcast
+        </a>
+      </div>
+
+      <!-- Donors Grid -->
+      <div class="donors-grid" id="donorsGrid"></div>
+
+    </div>
+    <!-- End Results Panel -->
+
+  </div>
+
+  <!-- ===== Contact Modal ===== -->
+  <div class="modal-overlay" id="contactModal">
+    <div class="modal-box">
+      <div class="modal-icon"><i class="fas fa-phone"></i></div>
+      <h3 id="modalDonorName">Donor Name</h3>
+      <p>Contact this donor directly for blood donation assistance</p>
+      <div class="modal-contact-info">
+        <p id="modalPhone">+880 1700-000000</p>
+        <span id="modalBlood"></span> •
+        <span id="modalDistrict"></span>
+      </div>
+      <div class="modal-actions">
+        <a href="#" class="btn btn-primary" id="modalCallBtn">
+          <i class="fas fa-phone"></i> Call Now
+        </a>
+        <button class="btn btn-outline" onclick="closeModal()">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // DEMO DONOR DATA (replace with PHP API later)
+    // ============================================
+    
+
+    // ============================================
+    // AI COMPATIBILITY TABLE (from SRS Appendix A)
+    // ============================================
+    const compatibility = {
+      'A+' : ['A+','A-','O+','O-'],
+      'A-' : ['A-','O-'],
+      'B+' : ['B+','B-','O+','O-'],
+      'B-' : ['B-','O-'],
+      'AB+': ['A+','A-','B+','B-','AB+','AB-','O+','O-'],
+      'AB-': ['A-','B-','AB-','O-'],
+      'O+' : ['O+','O-'],
+      'O-' : ['O-'],
+    };
+
+    // Groups that can donate to the selected group
+    // (who can give to X)
+    const compatibleDonors = {
+      'A+' : ['A+','A-','O+','O-'],
+      'A-' : ['A-','O-'],
+      'B+' : ['B+','B-','O+','O-'],
+      'B-' : ['B-','O-'],
+      'AB+': ['A+','A-','B+','B-','AB+','AB-','O+','O-'],
+      'AB-': ['A-','B-','AB-','O-'],
+      'O+' : ['O+','O-'],
+      'O-' : ['O-'],
+    };
+
+    let selectedBlood = '';
+    let currentResults = [];
+
+    // ---- Select Blood Pill ----
+    function selectBloodPill(group, el) {
+      document.querySelectorAll('.blood-pill')
+              .forEach(p => p.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedBlood = group;
+      document.getElementById('selectedBlood').value = group;
+    }
+
+    // ---- Use My Location ----
+    function useMyLocation() {
+      const btn = event.currentTarget;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Getting location...';
+      btn.disabled  = true;
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            btn.innerHTML = '<i class="fas fa-check"></i> Location acquired!';
+            btn.style.borderColor = 'var(--success)';
+            btn.style.color       = 'var(--success)';
+            setTimeout(() => {
+              btn.innerHTML = '<i class="fas fa-map-marker-alt"></i> Use My Location';
+              btn.disabled  = false;
+              btn.style     = '';
+            }, 2000);
+          },
+          () => {
+            btn.innerHTML = '<i class="fas fa-map-marker-alt"></i> Use My Location';
+            btn.disabled  = false;
+            alert('Location access denied. Please enable location in your browser.');
+          }
+        );
+      } else {
+        btn.innerHTML = '<i class="fas fa-map-marker-alt"></i> Use My Location';
+        btn.disabled  = false;
+      }
+    }
+
+    // ---- Run Search ----
+function runSearch() {
+  if (!selectedBlood) {
+    alert('Please select a blood group first.');
+    return;
+  }
+
+  document.getElementById('loadingState').classList.add('show');
+  document.getElementById('emptyState').classList.remove('show');
+  document.getElementById('aiBox').classList.remove('show');
+  document.getElementById('donorsGrid').innerHTML = '';
+
+  const districtFilter = document.getElementById('districtFilter').value;
+  const activeOnly     = document.getElementById('activeOnly').checked ? '1' : '0';
+  const verifiedOnly   = document.getElementById('verifiedOnly').checked ? '1' : '0';
+
+  const url = `php/search.php?blood=${encodeURIComponent(selectedBlood)}`
+            + `&district=${encodeURIComponent(districtFilter)}`
+            + `&active=${activeOnly}`
+            + `&verified=${verifiedOnly}`;
+
+  fetch(url)
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById('loadingState').classList.remove('show');
+
+    if (!data.success) {
+      document.getElementById('emptyState').classList.add('show');
+      return;
+    }
+
+    const results = data.data;
+    currentResults = results;
+
+    const exactMatches  = results.filter(d => d.blood_group === selectedBlood);
+    const compatMatches = results.filter(d => d.blood_group !== selectedBlood);
+
+    const compatGroups = compatibleDonors[selectedBlood] || [selectedBlood];
+    showAISuggestion(exactMatches.length, selectedBlood, compatGroups);
+
+    document.getElementById('resultsCount').innerText = results.length + ' found';
+    document.getElementById('resultsSubtitle').innerText =
+      results.length > 0
+      ? `Showing donors compatible with ${selectedBlood} blood group`
+      : `No donors found for ${selectedBlood}`;
+
+    if (results.length === 0) {
+      document.getElementById('emptyState').classList.add('show');
+    } else {
+      renderDonors(exactMatches, compatMatches);
+    }
+  })
+  .catch(() => {
+    document.getElementById('loadingState').classList.remove('show');
+    document.getElementById('emptyState').classList.add('show');
+  });
+}
+
+    // ---- Show AI Suggestion ----
+    function showAISuggestion(exactCount, needed, compatGroups) {
+      const box   = document.getElementById('aiBox');
+      const text  = document.getElementById('aiBoxText');
+      const pills = document.getElementById('aiPills');
+
+      const alternatives = compatGroups.filter(g => g !== needed);
+
+      if (exactCount === 0 && alternatives.length > 0) {
+        text.innerText =
+          `No exact ${needed} donors found. Our AI found these compatible alternatives:`;
+        pills.innerHTML = alternatives.map(g =>
+          `<div class="ai-pill" onclick="switchToBlood('${g}')">${g}</div>`
+        ).join('');
+        box.classList.add('show');
+      } else if (alternatives.length > 0) {
+        text.innerText =
+          `Found ${exactCount} exact ${needed} match(es). Compatible alternatives also available:`;
+        pills.innerHTML = alternatives.map(g =>
+          `<div class="ai-pill" onclick="switchToBlood('${g}')">${g}</div>`
+        ).join('');
+        box.classList.add('show');
+      } else {
+        box.classList.remove('show');
+      }
+    }
+
+    // ---- Switch to AI-suggested blood ----
+    function switchToBlood(group) {
+      document.querySelectorAll('.blood-pill').forEach(p => {
+        p.classList.toggle('selected', p.innerText === group);
+      });
+      selectedBlood = group;
+      runSearch();
+    }
+
+    // ---- Render Donors ----
+    function renderDonors(exactMatches, compatMatches) {
+      const grid = document.getElementById('donorsGrid');
+      grid.innerHTML = '';
+
+      if (exactMatches.length > 0) {
+        grid.innerHTML += `
+          <div style="font-size:13px; font-weight:700; color:var(--gray);
+                      text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">
+            <i class="fas fa-bullseye" style="color:var(--red)"></i>
+            Exact Match — ${selectedBlood}
+          </div>`;
+        exactMatches.forEach(d => {
+          grid.innerHTML += donorCardHTML(d, false);
+        });
+      }
+
+      if (compatMatches.length > 0) {
+        grid.innerHTML += `
+          <div style="font-size:13px; font-weight:700; color:var(--gray);
+                      text-transform:uppercase; letter-spacing:0.5px;
+                      margin-top:20px; margin-bottom:4px;">
+            <i class="fas fa-robot" style="color:var(--success)"></i>
+            AI Compatible Donors
+          </div>`;
+        compatMatches.forEach(d => {
+          grid.innerHTML += donorCardHTML(d, true);
+        });
+      }
+    }
+
+    // ---- Donor Card HTML ----
+    function donorCardHTML(donor, isCompat) {
+  const name     = donor.full_name || donor.name;
+  const blood    = donor.blood_group || donor.blood;
+  const district = donor.district;
+  const area     = donor.area || '';
+  const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+
+  const lastDon  = donor.last_donation;
+  let nextElig   = 'First time donor';
+  let isEligible = true;
+
+  if (lastDon) {
+    const eligDate = new Date(lastDon);
+    eligDate.setDate(eligDate.getDate() + 90);
+    nextElig   = eligDate.toLocaleDateString('en-BD',
+                  {day:'numeric', month:'short', year:'numeric'});
+    isEligible = new Date() >= eligDate;
+  }
+
+  return `
+    <div class="donor-result-card ${isCompat ? 'compatible' : ''}">
+      <div class="donor-avatar-lg">${initials}</div>
+      <div class="donor-result-info">
+        <h3>${name}</h3>
+        <div class="donor-meta">
+          <span><i class="fas fa-map-marker-alt"></i> ${area}, ${district}</span>
+          <span><i class="fas fa-calendar"></i> Next eligible: ${nextElig}</span>
+        </div>
+        <div class="donor-tags">
+          ${donor.is_verified == 1
+            ? '<span class="tag tag-verified"><i class="fas fa-check"></i> Verified</span>'
+            : ''}
+          ${isEligible
+            ? '<span class="tag tag-eligible">Eligible Now ✅</span>'
+            : '<span class="tag" style="background:#f8d7da;color:#721c24;">Not Yet Eligible</span>'}
+          ${isCompat
+            ? '<span class="tag tag-compatible"><i class="fas fa-robot"></i> AI Compatible</span>'
+            : ''}
+          <span class="status-badge ${donor.is_active == 1 ? 'status-active' : 'status-inactive'}">
+            ${donor.is_active == 1 ? 'Active' : 'Inactive'}
+          </span>
+        </div>
+      </div>
+      <div class="donor-result-actions">
+        <div class="blood-badge-lg">${blood}</div>
+        <button class="btn btn-primary btn-sm"
+                onclick='openContactModal(${JSON.stringify(donor)})'>
+          <i class="fas fa-phone"></i> Contact
+        </button>
+      </div>
+    </div>`;
+}
+
+    // ---- Sort Results ----
+    function sortResults() {
+      const sort  = document.getElementById('sortSelect').value;
+      let sorted  = [...currentResults];
+      if (sort === 'distance')  sorted.sort((a,b) => a.distance - b.distance);
+      if (sort === 'name')      sorted.sort((a,b) => a.name.localeCompare(b.name));
+      if (sort === 'donations') sorted.sort((a,b) => b.donations - a.donations);
+      const exact  = sorted.filter(d => d.blood === selectedBlood);
+      const compat = sorted.filter(d => d.blood !== selectedBlood);
+      renderDonors(exact, compat);
+    }
+
+    // ---- Contact Modal ----
+    function openContactModal(donor) {
+  const name  = donor.full_name || donor.name;
+  const blood = donor.blood_group || donor.blood;
+  document.getElementById('modalDonorName').innerText = name;
+  document.getElementById('modalPhone').innerText     = donor.phone || donor.phone_masked;
+  document.getElementById('modalBlood').innerText     = '🩸 ' + blood;
+  document.getElementById('modalDistrict').innerText  = '📍 ' + donor.district;
+  document.getElementById('modalCallBtn').href        = 'tel:' + donor.phone;
+  document.getElementById('contactModal').classList.add('show');
+}
+
+    function closeModal() {
+      document.getElementById('contactModal').classList.remove('show');
+    }
+
+    // Close modal on backdrop click
+    document.getElementById('contactModal')
+            .addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    // ---- Check URL params (from index.html blood group cards) ----
+    window.addEventListener('load', () => {
+      const params = new URLSearchParams(window.location.search);
+      const blood  = params.get('blood');
+      if (blood) {
+        document.querySelectorAll('.blood-pill').forEach(p => {
+          if (p.innerText.trim() === blood) {
+            p.classList.add('selected');
+            selectedBlood = blood;
+          }
+        });
+        runSearch();
+      }
+    });
+  </script>
+
+</body>
+</html>

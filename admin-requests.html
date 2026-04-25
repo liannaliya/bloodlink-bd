@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin — Emergency Requests</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body { background: var(--light-gray); }
+    .main { max-width: 1200px; margin: 0 auto; padding: 36px 24px; }
+    .table-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 28px; }
+    .table-card-header {
+      padding: 20px 24px; border-bottom: 2px solid var(--light-gray);
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    .table-card-header h2 { font-size: 18px; display: flex; align-items: center; gap: 8px; }
+    .table-card-header h2 i { color: var(--red); }
+    .admin-table { width: 100%; border-collapse: collapse; }
+    .admin-table thead th {
+      background: var(--red); color: white;
+      padding: 13px 16px; text-align: left; font-size: 13px;
+      font-family: 'Poppins', sans-serif;
+    }
+    .admin-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.2s; }
+    .admin-table tbody tr:hover { background: #fff5f5; }
+    .admin-table tbody td { padding: 13px 16px; font-size: 13px; vertical-align: middle; }
+    .urgency-critical { background:#f8d7da; color:#721c24; padding:4px 10px; border-radius:50px; font-size:12px; font-weight:700; }
+    .urgency-urgent   { background:#fff3cd; color:#856404; padding:4px 10px; border-radius:50px; font-size:12px; font-weight:700; }
+    .urgency-planned  { background:#d4edda; color:#155724; padding:4px 10px; border-radius:50px; font-size:12px; font-weight:700; }
+    .summary-bar {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 16px; margin-bottom: 24px;
+    }
+    .sum-card {
+      background: white; border-radius: var(--radius-sm);
+      box-shadow: var(--shadow); padding: 18px 20px;
+      border-left: 4px solid var(--red); text-align: center;
+    }
+    .sum-card h3 { font-size: 28px; color: var(--red); }
+    .sum-card p  { font-size: 12px; color: var(--gray); margin-top: 4px; }
+    .filter-bar {
+      display: flex; gap: 12px; padding: 14px 24px;
+      background: var(--light-gray); flex-wrap: wrap;
+    }
+    .filter-bar select {
+      padding: 7px 14px; border: 2px solid var(--border);
+      border-radius: var(--radius-sm); font-size: 13px; outline: none;
+    }
+    .btn-close-req {
+      background: #f8d7da; color: #721c24; border: none;
+      padding: 6px 12px; border-radius: 50px;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+    .btn-close-req:hover { background: var(--danger); color: white; }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--black); color: white;
+      padding: 12px 20px; border-radius: var(--radius-sm);
+      font-size: 13px; display: none; z-index: 9999;
+    }
+    .toast.show { display: block; }
+    @media (max-width: 768px) {
+      .summary-bar { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="logo" style="text-decoration:none;">
+      <i class="fas fa-tint"></i>Blood<span>Link BD</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="admin-dashboard.html">
+        <i class="fas fa-th-large"></i> Dashboard
+      </a></li>
+      <li><a href="admin-donors.html">
+        <i class="fas fa-users"></i> Donors
+      </a></li>
+      <li><a href="index.html" style="color:var(--red);">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </a></li>
+    </ul>
+  </nav>
+
+  <div class="page-header">
+    <h1><i class="fas fa-broadcast-tower"></i> Emergency Requests</h1>
+    <p>Monitor and manage all blood emergency broadcast requests</p>
+  </div>
+
+  <div class="main">
+
+    <!-- Summary -->
+    <div class="summary-bar">
+      <div class="sum-card">
+        <h3 id="totalReq">5</h3>
+        <p>Total Requests</p>
+      </div>
+      <div class="sum-card">
+        <h3 id="activeReq">3</h3>
+        <p>Active / Open</p>
+      </div>
+      <div class="sum-card">
+        <h3>2</h3>
+        <p>Critical Urgency</p>
+      </div>
+      <div class="sum-card">
+        <h3>2</h3>
+        <p>Closed / Resolved</p>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+      <div class="table-card-header">
+        <h2><i class="fas fa-broadcast-tower"></i> All Emergency Requests</h2>
+        <span style="font-size:13px; color:var(--gray);">
+          Total: <strong id="showCount">5</strong>
+        </span>
+      </div>
+
+      <div class="filter-bar">
+        <select onchange="filterByUrgency(this.value)">
+          <option value="">All Urgency</option>
+          <option value="Critical">Critical</option>
+          <option value="Urgent">Urgent</option>
+          <option value="Planned">Planned</option>
+        </select>
+        <select onchange="filterByBlood(this.value)">
+          <option value="">All Blood Groups</option>
+          <option>A+</option><option>A-</option>
+          <option>B+</option><option>O+</option><option>O-</option>
+        </select>
+        <select onchange="filterByStatus(this.value)">
+          <option value="">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Closed">Closed</option>
+        </select>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="admin-table" id="reqTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Patient</th>
+              <th>Blood</th>
+              <th>Hospital</th>
+              <th>District</th>
+              <th>Urgency</th>
+              <th>Submitted</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="reqBody">
+            <!-- Filled by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const requests = [
+      { id:1, patient:'Mohammad Alam',  blood:'A+', hospital:'Dhaka Medical College',
+        district:'Dhaka',       urgency:'Critical', time:'30 min ago', status:'Active'  },
+      { id:2, patient:'Fatema Begum',   blood:'O-', hospital:'Square Hospital',
+        district:'Dhaka',       urgency:'Urgent',   time:'2 hrs ago',  status:'Active'  },
+      { id:3, patient:'Karim Hossain',  blood:'B+', hospital:'Ibn Sina Hospital',
+        district:'Dhaka',       urgency:'Planned',  time:'Yesterday',  status:'Closed'  },
+      { id:4, patient:'Sumaiya Islam',  blood:'A-', hospital:'BIRDEM Hospital',
+        district:'Dhaka',       urgency:'Critical', time:'3 hrs ago',  status:'Active'  },
+      { id:5, patient:'Rahim Uddin',    blood:'O+', hospital:'Chittagong Medical',
+        district:'Chittagong',  urgency:'Urgent',   time:'1 day ago',  status:'Closed'  },
+    ];
+
+    let filtered = [...requests];
+
+    function urgencyClass(u) {
+      if (u === 'Critical') return 'urgency-critical';
+      if (u === 'Urgent')   return 'urgency-urgent';
+      return 'urgency-planned';
+    }
+
+    function renderTable(list) {
+      const tbody = document.getElementById('reqBody');
+      tbody.innerHTML = list.map((r, i) => `
+        <tr id="rrow-${r.id}">
+          <td>${i + 1}</td>
+          <td><strong>${r.patient}</strong></td>
+          <td><span class="blood-badge">${r.blood}</span></td>
+          <td>${r.hospital}</td>
+          <td>${r.district}</td>
+          <td><span class="${urgencyClass(r.urgency)}">${r.urgency}</span></td>
+          <td style="color:var(--gray);">${r.time}</td>
+          <td>
+            <span class="status-badge ${r.status === 'Active' ? 'status-active' : 'status-inactive'}">
+              ${r.status}
+            </span>
+          </td>
+          <td>
+            ${r.status === 'Active'
+              ? `<button class="btn-close-req" onclick="closeRequest(${r.id}, '${r.patient}')">
+                   <i class="fas fa-times"></i> Close
+                 </button>`
+              : '<span style="color:var(--gray);font-size:12px;">Resolved</span>'
+            }
+          </td>
+        </tr>
+      `).join('');
+      document.getElementById('showCount').innerText = list.length;
+    }
+
+    function filterByUrgency(u) {
+      filtered = u ? requests.filter(r => r.urgency === u) : [...requests];
+      renderTable(filtered);
+    }
+
+    function filterByBlood(b) {
+      filtered = b ? requests.filter(r => r.blood === b) : [...requests];
+      renderTable(filtered);
+    }
+
+    function filterByStatus(s) {
+      filtered = s ? requests.filter(r => r.status === s) : [...requests];
+      renderTable(filtered);
+    }
+
+    function closeRequest(id, name) {
+      const r = requests.find(x => x.id === id);
+      if (r) {
+        r.status = 'Closed';
+        renderTable(filtered);
+        document.getElementById('activeReq').innerText =
+          requests.filter(x => x.status === 'Active').length;
+        showToast(`✅ Request for ${name} marked as Closed.`);
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.innerText = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    window.addEventListener('load', () => renderTable(requests));
+  </script>
+
+</body>
+</html>

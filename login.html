@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login — BloodLink BD</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body {
+      background: linear-gradient(135deg, #fff5f5 0%, #ffffff 50%, #ffe5e5 100%);
+      min-height: 100vh;
+    }
+
+    .login-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .login-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      max-width: 980px;
+      width: 100%;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+      overflow: hidden;
+    }
+
+    /* ---- Left Panel ---- */
+    .login-left {
+      background: linear-gradient(135deg, var(--red) 0%, #c1121f 100%);
+      padding: 60px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: white;
+    }
+
+    .login-left .logo {
+      font-size: 26px;
+      font-weight: 800;
+      font-family: 'Poppins', sans-serif;
+      margin-bottom: 48px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .login-left h2 {
+      font-size: 36px;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .login-left p {
+      font-size: 15px;
+      opacity: 0.85;
+      line-height: 1.8;
+      margin-bottom: 40px;
+    }
+
+    .login-features {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .login-feature-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .login-feature-item i {
+      width: 36px;
+      height: 36px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    /* ---- Right Panel ---- */
+    .login-right {
+      padding: 60px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .login-right h3 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      color: var(--black);
+    }
+
+    .login-right .subtitle {
+      font-size: 14px;
+      color: var(--gray);
+      margin-bottom: 36px;
+    }
+
+    /* ---- Role Tabs ---- */
+    .role-tabs {
+      display: flex;
+      background: var(--light-gray);
+      border-radius: 50px;
+      padding: 4px;
+      margin-bottom: 32px;
+      gap: 4px;
+    }
+
+    .role-tab {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: transparent;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--gray);
+      transition: all 0.3s;
+    }
+
+    .role-tab.active {
+      background: var(--red);
+      color: white;
+      box-shadow: 0 4px 12px rgba(230,57,70,0.3);
+    }
+
+    /* ---- Input with Icon ---- */
+    .input-icon-wrap {
+      position: relative;
+    }
+
+    .input-icon-wrap i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+      font-size: 15px;
+    }
+
+    .input-icon-wrap input {
+      padding-left: 44px !important;
+    }
+
+    .input-icon-wrap .toggle-pass {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--gray);
+      font-size: 15px;
+      left: auto;
+    }
+
+    /* ---- Forgot / Remember ---- */
+    .form-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      font-size: 13px;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--gray);
+      cursor: pointer;
+    }
+
+    .remember-me input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--red);
+      cursor: pointer;
+    }
+
+    .forgot-link {
+      color: var(--red);
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+
+    .forgot-link:hover {
+      opacity: 0.75;
+    }
+
+    /* ---- Divider ---- */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+      color: var(--gray);
+      font-size: 13px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ---- Register Link ---- */
+    .register-link {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 14px;
+      color: var(--gray);
+    }
+
+    .register-link a {
+      color: var(--red);
+      font-weight: 600;
+    }
+
+    /* ---- Alert Box ---- */
+    .alert-box {
+      display: none;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .alert-box.show {
+      display: block;
+    }
+
+    /* ---- Admin Badge ---- */
+    .admin-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffc107;
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 768px) {
+      .login-container {
+        grid-template-columns: 1fr;
+      }
+      .login-left {
+        display: none;
+      }
+      .login-right {
+        padding: 40px 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="index.html" class="logo" style="text-decoration:none;">
+      <i class="fas fa-tint"></i>
+      Blood<span>Link BD</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="search.html">Find Blood</a></li>
+      <li><a href="register-donor.html" class="btn-nav">Become a Donor</a></li>
+    </ul>
+  </nav>
+
+  <!-- Login Wrapper -->
+  <div class="login-wrapper">
+    <div class="login-container">
+
+      <!-- Left Panel -->
+      <div class="login-left">
+        <div class="logo">
+          <i class="fas fa-tint"></i> BloodLink BD
+        </div>
+        <h2>Welcome Back, Hero!</h2>
+        <p>
+          Log in to manage your donor profile, respond to emergency
+          requests, and track your donation history.
+        </p>
+        <div class="login-features">
+          <div class="login-feature-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Real-time GPS donor matching</span>
+          </div>
+          <div class="login-feature-item">
+            <i class="fas fa-bell"></i>
+            <span>Instant emergency broadcast alerts</span>
+          </div>
+          <div class="login-feature-item">
+            <i class="fas fa-calendar-check"></i>
+            <span>Automatic eligibility tracking</span>
+          </div>
+          <div class="login-feature-item">
+            <i class="fas fa-shield-alt"></i>
+            <span>Verified & secure donor profiles</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel -->
+      <div class="login-right">
+        <h3>Sign In</h3>
+        <p class="subtitle">Choose your role and enter your credentials</p>
+
+        <!-- Role Tabs -->
+        <div class="role-tabs">
+          <button class="role-tab active" onclick="switchRole('donor', this)">
+            <i class="fas fa-heart"></i> Donor
+          </button>
+          <button class="role-tab" onclick="switchRole('seeker', this)">
+            <i class="fas fa-user"></i> Blood Seeker
+          </button>
+          <button class="role-tab" onclick="switchRole('admin', this)">
+            <i class="fas fa-user-shield"></i> Admin
+          </button>
+        </div>
+
+        <!-- Admin Warning Badge -->
+        <div class="admin-badge" id="adminBadge" style="display:none;">
+          <i class="fas fa-lock"></i> Admin Access — Restricted
+        </div>
+
+        <!-- Alert Box -->
+        <div class="alert-box alert-danger" id="alertBox"></div>
+
+        <!-- Login Form -->
+        <form id="loginForm" onsubmit="handleLogin(event)">
+
+          <div class="form-group">
+            <label>Phone Number</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-phone"></i>
+              <input
+                type="tel"
+                id="phone"
+                placeholder="e.g. 01700000000"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Password</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-lock"></i>
+              <input
+                type="password"
+                id="password"
+                placeholder="Enter your password"
+                required
+              />
+              <i class="fas fa-eye toggle-pass" onclick="togglePassword()"></i>
+            </div>
+          </div>
+
+          <div class="form-meta">
+            <label class="remember-me">
+              <input type="checkbox" id="remember"/>
+              Remember me
+            </label>
+            <a href="#" class="forgot-link">Forgot Password?</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" id="loginBtn">
+            <i class="fas fa-sign-in-alt"></i> Sign In
+          </button>
+
+        </form>
+
+        <div class="divider">or</div>
+
+        <a href="emergency-request.html" class="btn btn-outline btn-block" style="text-align:center;">
+          <i class="fas fa-broadcast-tower"></i> Continue as Guest — Emergency Request
+        </a>
+
+        <div class="register-link">
+          Don't have an account?
+          <a href="register-donor.html">Register as Donor</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Current role tracker
+    let currentRole = 'donor';
+
+    // Switch role tabs
+    function switchRole(role, btn) {
+      currentRole = role;
+
+      // Update tab UI
+      document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Show/hide admin badge
+      const adminBadge = document.getElementById('adminBadge');
+      adminBadge.style.display = role === 'admin' ? 'inline-flex' : 'none';
+
+      // Clear alert
+      hideAlert();
+    }
+
+    // Toggle password visibility
+    function togglePassword() {
+      const input = document.getElementById('password');
+      const icon  = document.querySelector('.toggle-pass');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+      }
+    }
+
+    // Show alert
+    function showAlert(msg, type = 'danger') {
+      const box = document.getElementById('alertBox');
+      box.className = `alert-box alert-${type} show`;
+      box.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${msg}`;
+    }
+
+    // Hide alert
+    function hideAlert() {
+      const box = document.getElementById('alertBox');
+      box.classList.remove('show');
+    }
+
+    // Handle login form submit
+    function handleLogin(e) {
+      e.preventDefault();
+      const phone    = document.getElementById('phone').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const btn      = document.getElementById('loginBtn');
+
+      // Basic validation
+      if (!phone || !password) {
+        showAlert('Please fill in all fields.');
+        return;
+      }
+
+      if (phone.length < 11) {
+        showAlert('Please enter a valid phone number.');
+        return;
+      }
+
+// Real PHP API call
+fetch('php/login.php', {
+    method: 'POST',
+    body: new URLSearchParams({ phone, password, role: currentRole })
+})
+.then(r => r.json())
+.then(data => {
+    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+    btn.disabled  = false;
+    if (data.success) {
+        localStorage.setItem('userRole', data.data.role);
+        localStorage.setItem('userName', data.data.name);
+        localStorage.setItem('donorId',  data.data.donor_id || '');
+        showAlert('Login successful! Redirecting...', 'success');
+        setTimeout(() => window.location.href = data.data.redirect, 1200);
+    } else {
+        showAlert(data.message);
+    }
+})
+.catch(() => {
+    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+    btn.disabled  = false;
+    showAlert('Server error. Make sure XAMPP is running.');
+});
+    }
+
+    // Keyboard enter support
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('loginForm').requestSubmit();
+      }
+    });
+  </script>
+
+</body>
+</html>

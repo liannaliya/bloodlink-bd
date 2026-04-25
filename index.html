@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BloodLink BD — Blood Donation Management System</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/components.css"/>
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    /* ---- HERO SECTION ---- */
+    .hero {
+      min-height: 92vh;
+      background: linear-gradient(135deg, #fff5f5 0%, #ffffff 60%, #ffe5e5 100%);
+      display: flex;
+      align-items: center;
+      padding: 60px;
+      gap: 60px;
+    }
+
+    .hero-content {
+      flex: 1;
+      max-width: 580px;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: #fff0f0;
+      color: var(--red);
+      border: 1px solid #ffcccc;
+      padding: 8px 18px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .hero h1 {
+      font-size: 54px;
+      line-height: 1.15;
+      color: var(--black);
+      margin-bottom: 22px;
+    }
+
+    .hero h1 span {
+      color: var(--red);
+    }
+
+    .hero p {
+      font-size: 17px;
+      color: var(--gray);
+      margin-bottom: 36px;
+      line-height: 1.8;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 36px;
+      margin-top: 48px;
+      padding-top: 36px;
+      border-top: 1px solid var(--border);
+    }
+
+    .hero-stat h3 {
+      font-size: 30px;
+      color: var(--red);
+      font-weight: 800;
+    }
+
+    .hero-stat p {
+      font-size: 13px;
+      color: var(--gray);
+      margin: 0;
+    }
+
+    .hero-visual {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero-illustration {
+      width: 480px;
+      height: 480px;
+      background: linear-gradient(135deg, var(--red) 0%, #c1121f 100%);
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      padding: 40px;
+      animation: morphing 8s ease-in-out infinite;
+      box-shadow: 0 20px 60px rgba(230,57,70,0.4);
+    }
+
+    @keyframes morphing {
+      0%   { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+      25%  { border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%; }
+      50%  { border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%; }
+      75%  { border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%; }
+      100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+    }
+
+    .hero-illustration i {
+      font-size: 80px;
+      margin-bottom: 16px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.08); }
+    }
+
+    .hero-illustration h2 {
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+
+    .hero-illustration p {
+      font-size: 14px;
+      opacity: 0.85;
+      color: white;
+      margin: 0;
+    }
+
+    /* ---- FEATURES SECTION ---- */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .feature-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 36px 28px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: all 0.3s;
+      border-top: 4px solid transparent;
+    }
+
+    .feature-card:hover {
+      border-top-color: var(--red);
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .feature-icon {
+      width: 72px;
+      height: 72px;
+      background: #fff0f0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 28px;
+      color: var(--red);
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover .feature-icon {
+      background: var(--red);
+      color: white;
+    }
+
+    .feature-card h3 {
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: var(--black);
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.7;
+    }
+
+    /* ---- HOW IT WORKS ---- */
+    .how-bg {
+      background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+      position: relative;
+    }
+
+    .steps-grid::before {
+      content: '';
+      position: absolute;
+      top: 40px;
+      left: 12%;
+      right: 12%;
+      height: 3px;
+      background: linear-gradient(to right, var(--red), #ffcccc);
+      z-index: 0;
+    }
+
+    .step-card {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-number {
+      width: 80px;
+      height: 80px;
+      background: var(--red);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      font-family: 'Poppins', sans-serif;
+      margin: 0 auto 20px;
+      box-shadow: 0 4px 20px rgba(230,57,70,0.4);
+      border: 4px solid white;
+    }
+
+    .step-card h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: var(--black);
+    }
+
+    .step-card p {
+      font-size: 13px;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    /* ---- EMERGENCY BANNER ---- */
+    .emergency-banner {
+      background: linear-gradient(135deg, var(--red) 0%, #c1121f 100%);
+      color: white;
+      padding: 80px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+    }
+
+    .emergency-banner h2 {
+      font-size: 38px;
+      margin-bottom: 14px;
+    }
+
+    .emergency-banner p {
+      font-size: 16px;
+      opacity: 0.9;
+      max-width: 500px;
+    }
+
+    .emergency-banner-btns {
+      display: flex;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    /* ---- BLOOD GROUPS SECTION ---- */
+    .blood-groups-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 16px;
+    }
+
+    .blood-group-card {
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .blood-group-card:hover,
+    .blood-group-card.active {
+      border-color: var(--red);
+      background: var(--red);
+      color: white;
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .blood-group-card h3 {
+      font-size: 22px;
+      color: var(--red);
+      margin-bottom: 4px;
+    }
+
+    .blood-group-card:hover h3,
+    .blood-group-card.active h3 {
+      color: white;
+    }
+
+    .blood-group-card p {
+      font-size: 11px;
+      color: var(--gray);
+    }
+
+    .blood-group-card:hover p,
+    .blood-group-card.active p {
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* ---- TESTIMONIALS ---- */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .testimonial-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 30px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .testimonial-card::before {
+      content: '"';
+      font-size: 80px;
+      color: #ffcccc;
+      font-family: Georgia, serif;
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      line-height: 1;
+    }
+
+    .testimonial-text {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.8;
+      margin-bottom: 20px;
+      padding-top: 30px;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .testimonial-avatar {
+      width: 46px;
+      height: 46px;
+      background: var(--red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .testimonial-author h4 {
+      font-size: 15px;
+      margin-bottom: 2px;
+    }
+
+    .testimonial-author p {
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    /* ---- MOBILE NAV ---- */
+    .mobile-nav {
+      display: none;
+      flex-direction: column;
+      background: white;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      position: absolute;
+      top: 70px;
+      left: 0;
+      right: 0;
+      z-index: 999;
+    }
+
+    .mobile-nav.open {
+      display: flex;
+    }
+
+    .mobile-nav a {
+      padding: 12px 0;
+      font-size: 15px;
+      font-weight: 500;
+      border-bottom: 1px solid var(--border);
+      color: var(--black);
+    }
+
+    .mobile-nav a:hover {
+      color: var(--red);
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 1024px) {
+      .hero { padding: 40px 30px; }
+      .hero h1 { font-size: 42px; }
+      .hero-illustration { width: 360px; height: 360px; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps-grid::before { display: none; }
+      .blood-groups-grid { grid-template-columns: repeat(4, 1fr); }
+      .emergency-banner { flex-direction: column; text-align: center; padding: 60px 30px; }
+    }
+
+    @media (max-width: 768px) {
+      .hero { flex-direction: column; padding: 40px 20px; text-align: center; }
+      .hero h1 { font-size: 32px; }
+      .hero-buttons { justify-content: center; }
+      .hero-stats { justify-content: center; }
+      .hero-visual { display: none; }
+      .features-grid { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .blood-groups-grid { grid-template-columns: repeat(4, 1fr); }
+      .emergency-banner-btns { flex-direction: column; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar">
+    <div class="logo">
+      <i class="fas fa-tint"></i>
+      Blood<span>Link BD</span>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="search.html">Find Blood</a></li>
+      <li><a href="blood-compatibility.html">Compatibility</a></li>
+      <li><a href="emergency-request.html">Emergency</a></li>
+      <li><a href="register-donor.html" class="btn-nav">Become a Donor</a></li>
+      <li><a href="login.html">Login</a></li>
+    </ul>
+
+    <div class="hamburger" onclick="toggleMobileNav()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- Mobile Nav -->
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html">🏠 Home</a>
+    <a href="search.html">🔍 Find Blood</a>
+    <a href="blood-compatibility.html">🩸 Compatibility</a>
+    <a href="emergency-request.html">🚨 Emergency</a>
+    <a href="register-donor.html">❤️ Become a Donor</a>
+    <a href="login.html">🔐 Login</a>
+  </div>
+
+  <!-- ===== HERO SECTION ===== -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <i class="fas fa-heart"></i> Bangladesh's Smart Blood Donation Platform
+      </div>
+      <h1>Save Lives with the <span>Right Blood</span> at the Right Time</h1>
+      <p>
+        BloodLink BD connects blood donors with patients in need through
+        AI-powered compatibility matching, real-time location search, and
+        emergency broadcast notifications across Bangladesh.
+      </p>
+      <div class="hero-buttons">
+        <a href="search.html" class="btn btn-primary">
+          <i class="fas fa-search"></i> Find Blood Now
+        </a>
+        <a href="register-donor.html" class="btn btn-outline">
+          <i class="fas fa-user-plus"></i> Become a Donor
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <h3>1,200+</h3>
+          <p>Registered Donors</p>
+        </div>
+        <div class="hero-stat">
+          <h3>850+</h3>
+          <p>Lives Saved</p>
+        </div>
+        <div class="hero-stat">
+          <h3>64</h3>
+          <p>Districts Covered</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-illustration">
+        <i class="fas fa-tint"></i>
+        <h2>Donate Blood</h2>
+        <p>Every drop counts.<br/>Be someone's hero today.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURES SECTION ===== -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center">
+        <h2 class="section-title">Why Choose <span>BloodLink BD?</span></h2>
+        <p class="section-subtitle" style="margin: 0 auto 50px;">
+          Built specifically for Bangladesh's emergency blood needs — fast, smart, and reliable.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <h3>Real-Time Location Search</h3>
+          <p>Find the nearest available blood donor in seconds using GPS-based location matching across Bangladesh.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-robot"></i></div>
+          <h3>AI Compatibility Matching</h3>
+          <p>Our AI engine suggests compatible alternative blood groups when your exact match is unavailable.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-bell"></i></div>
+          <h3>Emergency Broadcast</h3>
+          <p>Instantly alert all eligible donors within your area during a life-threatening emergency.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-calendar-check"></i></div>
+          <h3>Eligibility Tracking</h3>
+          <p>Automatically tracks your last donation date and calculates when you are next eligible to donate.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+          <h3>Verified Donors Only</h3>
+          <p>All donors are verified by our admin team ensuring safe, reliable, and accurate donor profiles.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-sms"></i></div>
+          <h3>SMS Fallback</h3>
+          <p>Even in low-connectivity areas, emergency requests can be submitted via SMS for maximum reach.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section class="section how-bg">
+    <div class="container">
+      <div class="text-center">
+        <h2 class="section-title">How It <span>Works</span></h2>
+        <p class="section-subtitle" style="margin: 0 auto 60px;">
+          Get blood help in 4 simple steps — designed for emergencies.
+        </p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3>Search Blood Group</h3>
+          <p>Select the required blood group and enable location access to begin your search.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3>View Nearby Donors</h3>
+          <p>See a list of available donors sorted by distance from your current location.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3>Contact or Broadcast</h3>
+          <p>Contact a donor directly or send an emergency broadcast to all nearby donors.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <h3>Receive Blood Help</h3>
+          <p>A donor responds, confirms, and helps save your life or your loved one's life.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BLOOD GROUPS SECTION ===== -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center">
+        <h2 class="section-title">Find Donors by <span>Blood Group</span></h2>
+        <p class="section-subtitle" style="margin: 0 auto 40px;">
+          Click any blood group to instantly search for available donors.
+        </p>
+      </div>
+
+      <div class="blood-groups-grid">
+        <div class="blood-group-card" onclick="searchBlood('A+')">
+          <h3>A+</h3>
+          <p>A Positive</p>
+        </div>
+        <div class="blood-group-card" onclick="searchBlood('A-')">
+          <h3>A-</h3>
+          <p>A Negative</p>
+        </div>
+        <div class="blood-group-card" onclick="searchBlood('B+')">
+          <h3>B+</h3>
+          <p>B Positive</p>
+        </div>
+        <div class="blood-group-card" onclick="searchBlood('B-')">
+          <h3>B-</h3>
+          <p>B Negative</p>
+        </div>
+        <div class="blood-group-card" onclick="searchBlood('AB+')">
+          <h3>AB+</h3>
+          <p>AB Positive</p>
+        </div>
+        <div class="blood-group-card" onclick="searchBlood('AB-')">
+          <h3>AB-</h3>
+          <p>AB Negative</p>
+        </div>
+        <div class="blood-group-card" onclick="searchBlood('O+')">
+          <h3>O+</h3>
+          <p>O Positive</p>
+        </div>
+        <div class="blood-group-card" onclick="searchBlood('O-')">
+          <h3>O-</h3>
+          <p>Universal Donor</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== EMERGENCY BANNER ===== -->
+  <section class="emergency-banner">
+    <div>
+      <h2>🚨 Need Blood Urgently?</h2>
+      <p>
+        Submit an emergency broadcast and instantly alert all compatible
+        donors within your area. Every second counts in an emergency.
+      </p>
+    </div>
+    <div class="emergency-banner-btns">
+      <a href="emergency-request.html" class="btn btn-white">
+        <i class="fas fa-broadcast-tower"></i> Send Emergency Alert
+      </a>
+      <a href="search.html" class="btn btn-outline" style="border-color:white; color:white;">
+        <i class="fas fa-search"></i> Search Donors
+      </a>
+    </div>
+  </section>
+
+  <!-- ===== TESTIMONIALS ===== -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center">
+        <h2 class="section-title">Lives <span>Saved</span></h2>
+        <p class="section-subtitle" style="margin: 0 auto 50px;">
+          Real stories from people who used BloodLink BD in their emergencies.
+        </p>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <p class="testimonial-text">
+            My mother needed O- blood urgently after surgery. Within 10 minutes of posting
+            an emergency request, two donors responded. BloodLink BD saved her life.
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">R</div>
+            <div>
+              <h4>Rahim Uddin</h4>
+              <p>Dhaka, Bangladesh</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <p class="testimonial-text">
+            I never knew which blood groups were compatible with mine. The AI suggestion
+            feature found me a compatible donor when no exact match was available. Amazing!
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">S</div>
+            <div>
+              <h4>Sumaiya Khanam</h4>
+              <p>Chittagong, Bangladesh</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <p class="testimonial-text">
+            As a regular donor, the eligibility tracker reminds me exactly when I can donate
+            again. The platform makes it so easy to help people in need across Bangladesh.
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">K</div>
+            <div>
+              <h4>Karim Hossain</h4>
+              <p>Rajshahi, Bangladesh</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">
+            <i class="fas fa-tint"></i> BloodLink BD
+          </div>
+          <p>Bangladesh's smart blood donation management system. Connecting donors with patients through AI-powered matching and real-time location search.</p>
+        </div>
+        <div>
+          <h3>Quick Links</h3>
+          <a href="search.html">Find Blood</a>
+          <a href="register-donor.html">Become a Donor</a>
+          <a href="emergency-request.html">Emergency Request</a>
+          <a href="blood-compatibility.html">Compatibility Chart</a>
+        </div>
+        <div>
+          <h3>For Donors</h3>
+          <a href="login.html">Donor Login</a>
+          <a href="donor-profile.html">My Profile</a>
+          <a href="register-donor.html">Register</a>
+        </div>
+        <div>
+          <h3>Contact</h3>
+          <a href="#">📧 info@bloodlinkbd.com</a>
+          <a href="#">📞 +880 1700-000000</a>
+          <a href="#">📍 Dhaka, Bangladesh</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 BloodLink BD — Blood Donation Management System | IEEE Std 830-1998 Compliant</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile Nav Toggle
+    function toggleMobileNav() {
+      const nav = document.getElementById('mobileNav');
+      nav.classList.toggle('open');
+    }
+
+    // Blood Group Quick Search
+    function searchBlood(group) {
+      // Highlight selected card
+      document.querySelectorAll('.blood-group-card').forEach(c => c.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      // Redirect to search page with blood group pre-selected
+      setTimeout(() => {
+        window.location.href = `search.html?blood=${encodeURIComponent(group)}`;
+      }, 300);
+    }
+
+    // Animate stats on scroll
+    function animateStats() {
+      const stats = document.querySelectorAll('.hero-stat h3');
+      stats.forEach(stat => {
+        const target = parseInt(stat.innerText.replace('+','').replace(',',''));
+        let count = 0;
+        const step = Math.ceil(target / 60);
+        const timer = setInterval(() => {
+          count += step;
+          if (count >= target) {
+            count = target;
+            clearInterval(timer);
+          }
+          stat.innerText = count.toLocaleString() + (stat.innerText.includes('+') || target > 100 ? '+' : '');
+        }, 30);
+      });
+    }
+
+    // Run on load
+    window.addEventListener('load', () => {
+      setTimeout(animateStats, 500);
+    });
+  </script>
+
+</body>
+</html>

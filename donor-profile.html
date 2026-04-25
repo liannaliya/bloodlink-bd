@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Donor Profile — BloodLink BD</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body { background: var(--light-gray); }
+
+    .profile-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 28px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 36px 24px 60px;
+    }
+
+    /* ---- Left: Profile Card ---- */
+    .profile-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      height: fit-content;
+      position: sticky;
+      top: 90px;
+    }
+
+    .profile-card-top {
+      background: linear-gradient(135deg, var(--red), #c1121f);
+      padding: 36px 24px;
+      text-align: center;
+      color: white;
+    }
+
+    .profile-avatar {
+      width: 90px; height: 90px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px; font-weight: 800;
+      font-family: 'Poppins', sans-serif;
+      margin: 0 auto 16px;
+      border: 3px solid rgba(255,255,255,0.5);
+    }
+
+    .profile-card-top h2 { font-size: 20px; margin-bottom: 4px; }
+    .profile-card-top p  { font-size: 13px; opacity: 0.85; margin: 0; }
+
+    .blood-badge-profile {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.5);
+      color: white;
+      padding: 6px 20px;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 18px;
+      font-family: 'Poppins', sans-serif;
+      margin-top: 12px;
+    }
+
+    .profile-card-body { padding: 24px; }
+
+    .profile-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .profile-info-row:last-child { border-bottom: none; }
+    .profile-info-row span:first-child { color: var(--gray); }
+    .profile-info-row span:last-child  { font-weight: 600; color: var(--black); }
+
+    /* Availability Toggle */
+    .availability-section {
+      margin: 20px 24px;
+      padding: 16px;
+      background: var(--light-gray);
+      border-radius: var(--radius-sm);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .availability-section h4 { font-size: 14px; margin-bottom: 4px; }
+    .availability-section p  { font-size: 12px; color: var(--gray); margin: 0; }
+
+    /* ---- Right: Content ---- */
+    .profile-content { display: flex; flex-direction: column; gap: 24px; }
+
+    .content-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px 32px;
+    }
+
+    .content-card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .content-card-title i { color: var(--red); }
+
+    /* Stats Row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .mini-stat {
+      background: var(--light-gray);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      text-align: center;
+      border-top: 3px solid var(--red);
+    }
+
+    .mini-stat h3 {
+      font-size: 32px;
+      color: var(--red);
+      margin-bottom: 4px;
+    }
+
+    .mini-stat p {
+      font-size: 12px;
+      color: var(--gray);
+      font-weight: 500;
+    }
+
+    /* Eligibility Bar */
+    .eligibility-section { margin-top: 4px; }
+
+    .elig-bar-wrap {
+      background: var(--border);
+      border-radius: 50px;
+      height: 10px;
+      margin: 10px 0 6px;
+      overflow: hidden;
+    }
+
+    .elig-bar {
+      height: 100%;
+      border-radius: 50px;
+      background: linear-gradient(to right, var(--red), #ff6b6b);
+      transition: width 1s ease;
+    }
+
+    .elig-dates {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    /* Donation History Table */
+    .history-table { width: 100%; border-collapse: collapse; }
+    .history-table thead th {
+      background: var(--red); color: white;
+      padding: 12px 16px; text-align: left;
+      font-size: 13px; font-family: 'Poppins', sans-serif;
+    }
+    .history-table tbody tr { border-bottom: 1px solid var(--border); }
+    .history-table tbody tr:hover { background: #fff5f5; }
+    .history-table tbody td { padding: 12px 16px; font-size: 13px; }
+
+    /* Edit Form */
+    .edit-form { display: none; }
+    .edit-form.show { display: block; }
+
+    .input-icon-wrap { position: relative; }
+    .input-icon-wrap i {
+      position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray); font-size: 13px; pointer-events: none;
+    }
+    .input-icon-wrap input,
+    .input-icon-wrap select { padding-left: 40px !important; }
+
+    /* Notification Item */
+    .notif-item {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 0; border-bottom: 1px solid var(--border);
+    }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-icon {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .notif-icon.red   { background: #fff0f0; color: var(--red); }
+    .notif-icon.green { background: #d4edda; color: var(--success); }
+    .notif-icon.blue  { background: #cce5ff; color: #004085; }
+    .notif-item h4  { font-size: 14px; margin-bottom: 3px; }
+    .notif-item p   { font-size: 12px; color: var(--gray); margin: 0; }
+
+    /* Alert */
+    .alert-box { display:none; padding:12px 16px; border-radius:var(--radius-sm);
+                 margin-bottom:16px; font-size:13px; font-weight:500; }
+    .alert-box.show { display:block; }
+
+    @media (max-width: 900px) {
+      .profile-layout { grid-template-columns: 1fr; }
+      .profile-card { position: static; }
+      .stats-row { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .stats-row { grid-template-columns: 1fr; }
+      .content-card { padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="index.html" class="logo" style="text-decoration:none;">
+      <i class="fas fa-tint"></i>Blood<span>Link BD</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="search.html">Find Blood</a></li>
+      <li><a href="#" onclick="logout()" style="color:var(--red);">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </a></li>
+    </ul>
+  </nav>
+
+  <div class="page-header">
+    <h1><i class="fas fa-user-circle"></i> Donor Profile</h1>
+    <p>Manage your availability, view donation history, and track eligibility</p>
+  </div>
+
+  <div class="profile-layout">
+
+    <!-- ===== LEFT: Profile Card ===== -->
+    <div>
+      <div class="profile-card">
+        <div class="profile-card-top">
+          <div class="profile-avatar" id="avatarInitials">MR</div>
+          <h2 id="profileName">Mohammad Rahim</h2>
+          <p id="profileLocation"><i class="fas fa-map-marker-alt"></i> Mirpur, Dhaka</p>
+          <div class="blood-badge-profile" id="profileBlood">A+</div>
+        </div>
+
+        <!-- Availability Toggle -->
+        <div class="availability-section">
+          <div>
+            <h4>Availability Status</h4>
+            <p id="availText">You are currently Active</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="availToggle" checked onchange="toggleAvailability()"/>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="profile-card-body">
+          <div class="profile-info-row">
+            <span><i class="fas fa-phone"></i> Phone</span>
+            <span id="profilePhone">01711-111111</span>
+          </div>
+          <div class="profile-info-row">
+            <span><i class="fas fa-venus-mars"></i> Gender</span>
+            <span id="profileGender">Male</span>
+          </div>
+          <div class="profile-info-row">
+            <span><i class="fas fa-weight"></i> Weight</span>
+            <span id="profileWeight">65 kg</span>
+          </div>
+          <div class="profile-info-row">
+            <span><i class="fas fa-shield-alt"></i> Status</span>
+            <span class="status-badge status-active">Verified</span>
+          </div>
+          <div class="profile-info-row">
+            <span><i class="fas fa-calendar"></i> Member Since</span>
+            <span>Jan 2025</span>
+          </div>
+        </div>
+
+        <div style="padding: 0 24px 24px;">
+          <button class="btn btn-outline btn-block btn-sm"
+                  onclick="toggleEditForm()">
+            <i class="fas fa-edit"></i> Edit Profile
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== RIGHT: Content ===== -->
+    <div class="profile-content">
+
+      <!-- Donation Stats -->
+      <div class="content-card">
+        <div class="content-card-title">
+          <i class="fas fa-chart-bar"></i> Donation Summary
+        </div>
+        <div class="stats-row">
+          <div class="mini-stat">
+            <h3 id="statDonations">0</h3>
+            <p>Total Donations</p>
+          </div>
+          <div class="mini-stat">
+            <h3 id="statLives">0</h3>
+            <p>Lives Impacted</p>
+          </div>
+          <div class="mini-stat">
+            <h3 id="statResponded">0</h3>
+            <p>Requests Responded</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Eligibility Tracker -->
+      <div class="content-card">
+        <div class="content-card-title">
+          <i class="fas fa-calendar-check"></i> Donation Eligibility
+        </div>
+        <div class="eligibility-section">
+          <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:600;">
+            <span>Last Donation: <strong id="lastDonDate">Dec 1, 2025</strong></span>
+            <span id="eligStatus" class="status-badge status-active">Eligible Now ✅</span>
+          </div>
+          <div class="elig-bar-wrap">
+            <div class="elig-bar" id="eligBar" style="width:100%"></div>
+          </div>
+          <div class="elig-dates">
+            <span id="lastDonLabel">Dec 1, 2025</span>
+            <span style="color:var(--red); font-weight:600;">
+              Next eligible: <span id="nextEligDate">Mar 1, 2026</span>
+            </span>
+          </div>
+          <p style="font-size:12px; color:var(--gray); margin-top:8px;">
+            <i class="fas fa-info-circle"></i>
+            A minimum 90-day gap is required between donations (WHO standard).
+          </p>
+        </div>
+
+        <!-- Log New Donation -->
+        <div style="margin-top:20px; padding-top:20px; border-top:2px solid var(--light-gray);">
+          <h4 style="font-size:14px; margin-bottom:12px;">
+            <i class="fas fa-plus-circle" style="color:var(--red)"></i> Log a New Donation
+          </h4>
+          <div style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;">
+            <div class="form-group" style="flex:1; margin:0;">
+              <label style="font-size:13px;">Donation Date</label>
+              <input type="date" id="newDonationDate" style="padding:10px 14px;
+                     border:2px solid var(--border); border-radius:var(--radius-sm);
+                     width:100%; font-size:14px; outline:none;"/>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="logDonation()"
+                    style="padding:10px 20px; white-space:nowrap;">
+              <i class="fas fa-save"></i> Save
+            </button>
+          </div>
+          <div class="alert-box alert-success" id="donationAlert"></div>
+        </div>
+      </div>
+
+      <!-- Donation History -->
+      <div class="content-card">
+        <div class="content-card-title">
+          <i class="fas fa-history"></i> Donation History
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Blood Group</th>
+                <th>Location</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody">
+              <tr>
+                <td>8</td><td>Dec 1, 2025</td><td><span class="blood-badge">A+</span></td>
+                <td>Dhaka Medical College</td>
+                <td><span class="status-badge status-active">Completed</span></td>
+              </tr>
+              <tr>
+                <td>7</td><td>Aug 15, 2025</td><td><span class="blood-badge">A+</span></td>
+                <td>Square Hospital, Dhaka</td>
+                <td><span class="status-badge status-active">Completed</span></td>
+              </tr>
+              <tr>
+                <td>6</td><td>Apr 10, 2025</td><td><span class="blood-badge">A+</span></td>
+                <td>Ibn Sina Hospital, Dhaka</td>
+                <td><span class="status-badge status-active">Completed</span></td>
+              </tr>
+              <tr>
+                <td>5</td><td>Dec 20, 2024</td><td><span class="blood-badge">A+</span></td>
+                <td>BIRDEM Hospital, Dhaka</td>
+                <td><span class="status-badge status-active">Completed</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Recent Notifications -->
+      <div class="content-card">
+        <div class="content-card-title">
+          <i class="fas fa-bell"></i> Recent Notifications
+        </div>
+        <div class="notif-item">
+          <div class="notif-icon red"><i class="fas fa-broadcast-tower"></i></div>
+          <div>
+            <h4>Emergency Request Nearby</h4>
+            <p>A+ blood needed at Dhaka Medical — 2.1 km away • 2 hours ago</p>
+          </div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-icon green"><i class="fas fa-check-circle"></i></div>
+          <div>
+            <h4>You Are Now Eligible to Donate</h4>
+            <p>90 days have passed since your last donation • Yesterday</p>
+          </div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-icon blue"><i class="fas fa-shield-alt"></i></div>
+          <div>
+            <h4>Profile Verified</h4>
+            <p>Your donor account has been verified by admin • Jan 10, 2025</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Profile Form -->
+      <div class="content-card edit-form" id="editForm">
+        <div class="content-card-title">
+          <i class="fas fa-edit"></i> Edit Profile
+        </div>
+        <div class="alert-box" id="editAlert"></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-user"></i>
+              <input type="text" id="editName" value="Mohammad Rahim"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-phone"></i>
+              <input type="tel" id="editPhone" value="01711-111111"/>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>District</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-city"></i>
+              <select id="editDistrict">
+                <option selected>Dhaka</option>
+                <option>Chittagong</option><option>Rajshahi</option>
+                <option>Khulna</option><option>Sylhet</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Area</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-map-marker-alt"></i>
+              <input type="text" id="editArea" value="Mirpur"/>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex; gap:12px;">
+          <button class="btn btn-primary" onclick="saveProfile()">
+            <i class="fas fa-save"></i> Save Changes
+          </button>
+          <button class="btn btn-outline" onclick="toggleEditForm()">
+            Cancel
+          </button>
+        </div>
+      </div>
+
+    </div>
+    <!-- End Right Content -->
+  </div>
+
+  <script>
+
+
+    // Load real profile from database
+function loadProfile() {
+  const donorId = localStorage.getItem('donorId');
+
+  if (!donorId) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  fetch(`php/profile.php?donor_id=${donorId}`)
+  .then(r => r.json())
+  .then(data => {
+    if (!data.success) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const d = data.data;
+
+    // Update profile card
+    const initials = d.full_name.split(' ')
+                     .map(n => n[0]).join('').toUpperCase().slice(0,2);
+    document.getElementById('avatarInitials').innerText  = initials;
+    document.getElementById('profileName').innerText     = d.full_name;
+    document.getElementById('profileLocation').innerHTML =
+      `<i class="fas fa-map-marker-alt"></i> ${d.area}, ${d.district}`;
+    document.getElementById('profileBlood').innerText    = d.blood_group;
+    document.getElementById('profilePhone').innerText    = d.phone;
+    document.getElementById('profileGender').innerText   =
+      d.gender.charAt(0).toUpperCase() + d.gender.slice(1);
+    document.getElementById('profileWeight').innerText   = d.weight + ' kg';
+
+    // Availability toggle
+    document.getElementById('availToggle').checked = d.is_active == 1;
+    document.getElementById('availText').innerText =
+      d.is_active == 1 ? 'You are currently Active' : 'You are currently Inactive';
+
+    // Member since
+    const since = new Date(d.created_at).toLocaleDateString('en-BD',
+      { month:'short', year:'numeric' });
+
+    // Donation stats
+    document.getElementById('statDonations').innerText  = d.total_donations;
+    document.getElementById('statLives').innerText      = d.total_donations * 3;
+    document.getElementById('statResponded').innerText  = d.total_donations;
+
+    // Eligibility
+    if (d.last_donation) {
+      const lastDate = new Date(d.last_donation);
+      const nextDate = new Date(d.next_eligible);
+      const today    = new Date();
+      const isElig   = today >= nextDate;
+
+      document.getElementById('lastDonDate').innerText  =
+        lastDate.toLocaleDateString('en-BD',
+          {day:'numeric', month:'short', year:'numeric'});
+      document.getElementById('lastDonLabel').innerText =
+        lastDate.toLocaleDateString('en-BD',
+          {day:'numeric', month:'short', year:'numeric'});
+      document.getElementById('nextEligDate').innerText =
+        nextDate.toLocaleDateString('en-BD',
+          {day:'numeric', month:'short', year:'numeric'});
+
+      const statusEl = document.getElementById('eligStatus');
+      statusEl.className = 'status-badge ' +
+        (isElig ? 'status-active' : 'status-inactive');
+      statusEl.innerText = isElig ? 'Eligible Now ✅' : 'Not Yet Eligible ⏳';
+    }
+
+    // Pre-fill edit form
+    document.getElementById('editName').value     = d.full_name;
+    document.getElementById('editPhone').value    = d.phone;
+    document.getElementById('editDistrict').value = d.district;
+    document.getElementById('editArea').value     = d.area;
+
+  })
+  .catch(() => {
+    window.location.href = 'login.html';
+  });
+}
+    // Toggle availability
+    function toggleAvailability() {
+      const isActive = document.getElementById('availToggle').checked;
+      document.getElementById('availText').innerText =
+        isActive ? 'You are currently Active' : 'You are currently Inactive';
+    }
+
+    // Toggle edit form
+    function toggleEditForm() {
+      document.getElementById('editForm').classList.toggle('show');
+      document.getElementById('editForm').scrollIntoView({ behavior:'smooth' });
+    }
+
+    // Save profile (demo)
+    function saveProfile() {
+      const name = document.getElementById('editName').value.trim();
+      if (!name) return;
+      document.getElementById('profileName').innerText = name;
+      document.getElementById('avatarInitials').innerText =
+        name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
+      const alert = document.getElementById('editAlert');
+      alert.className = 'alert-box alert-success show';
+      alert.innerHTML = '<i class="fas fa-check-circle"></i> Profile updated successfully!';
+      setTimeout(() => {
+        alert.classList.remove('show');
+        document.getElementById('editForm').classList.remove('show');
+      }, 2000);
+    }
+
+    // Log new donation
+    function logDonation() {
+      const date = document.getElementById('newDonationDate').value;
+      if (!date) return;
+      const formatted = new Date(date).toLocaleDateString('en-BD',
+        { day:'numeric', month:'short', year:'numeric' });
+      // Update last donation display
+      document.getElementById('lastDonDate').innerText = formatted;
+      document.getElementById('lastDonLabel').innerText = formatted;
+      // Calculate next eligible
+      const next = new Date(date);
+      next.setDate(next.getDate() + 90);
+      const nextStr = next.toLocaleDateString('en-BD',
+        { day:'numeric', month:'short', year:'numeric' });
+      document.getElementById('nextEligDate').innerText = nextStr;
+      // Update eligibility status
+      const today = new Date();
+      const isElig = today >= next;
+      const statusEl = document.getElementById('eligStatus');
+      statusEl.className = 'status-badge ' + (isElig ? 'status-active' : 'status-inactive');
+      statusEl.innerText = isElig ? 'Eligible Now ✅' : 'Not Yet Eligible ⏳';
+      // Add to history table
+      const tbody = document.getElementById('historyBody');
+      const rows  = tbody.querySelectorAll('tr').length;
+      const newRow = `<tr>
+        <td>${rows + 1}</td>
+        <td>${formatted}</td>
+        <td><span class="blood-badge">A+</span></td>
+        <td>Logged manually</td>
+        <td><span class="status-badge status-active">Completed</span></td>
+      </tr>`;
+      tbody.insertAdjacentHTML('afterbegin', newRow);
+      // Show success
+      const alert = document.getElementById('donationAlert');
+      alert.className = 'alert-box alert-success show';
+      alert.innerHTML = '<i class="fas fa-check-circle"></i> Donation logged successfully!';
+      document.getElementById('newDonationDate').value = '';
+      setTimeout(() => alert.classList.remove('show'), 3000);
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    }
+
+    // Set max date for donation log
+    window.addEventListener('load', () => {
+  document.getElementById('newDonationDate').max =
+    new Date().toISOString().split('T')[0];
+  loadProfile();
+});
+  </script>
+
+</body>
+</html>
