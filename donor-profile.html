@@ -508,7 +508,7 @@ function loadProfile() {
     return;
   }
 
-  fetch(`php/profile.php?donor_id=${donorId}`)
+  fetch(`api/profile.php?donor_id=${donorId}`)
   .then(r => r.json())
   .then(data => {
     if (!data.success) {

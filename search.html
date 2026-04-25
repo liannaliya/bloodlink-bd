@@ -795,7 +795,7 @@ function runSearch() {
   const activeOnly     = document.getElementById('activeOnly').checked ? '1' : '0';
   const verifiedOnly   = document.getElementById('verifiedOnly').checked ? '1' : '0';
 
-  const url = `php/search.php?blood=${encodeURIComponent(selectedBlood)}`
+  const url = `api/search.php?blood=${encodeURIComponent(selectedBlood)}`
             + `&district=${encodeURIComponent(districtFilter)}`
             + `&active=${activeOnly}`
             + `&verified=${verifiedOnly}`;

@@ -423,7 +423,7 @@ function submitRequest() {
         notes        : document.getElementById('notes').value.trim(),
       });
 
-      fetch('php/emergency.php', {
+      fetch('api/emergency.php', {
         method: 'POST',
         body  : formData
       })

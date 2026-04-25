@@ -1023,7 +1023,7 @@ function submitForm() {
     med_notes    : document.getElementById('medNotes').value.trim(),
   });
 
-  fetch('php/register.php', {
+  fetch('api/register.php', {
     method : 'POST',
     body   : formData
   })
