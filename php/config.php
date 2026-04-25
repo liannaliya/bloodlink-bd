@@ -1,15 +1,16 @@
 <?php
 // ============================================
-// BloodLink BD — Database Configuration
+// BloodLink BD — Aiven Database Configuration
 // ============================================
 
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');       // XAMPP default
-define('DB_PASS', '');           // XAMPP default (empty)
-define('DB_NAME', 'bdms');
+define('DB_HOST', 'mysql-3ae83f44-iub-a4ea.c.aivencloud.com');      // e.g. mysql-xxx.aivencloud.com
+define('DB_PORT', '24087');      // e.g. 12345
+define('DB_USER', 'avnadmin');
+define('DB_PASS', 'AVNS_f0YJYolCwtfuuAGSzdP');
+define('DB_NAME', 'defaultdb');
 
-// Create connection
-$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+// Create connection with port
+$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, (int)DB_PORT);
 
 // Check connection
 if ($conn->connect_error) {
@@ -19,7 +20,6 @@ if ($conn->connect_error) {
     ]));
 }
 
-// Set charset
 $conn->set_charset('utf8mb4');
 
 // Helper: send JSON response
@@ -32,3 +32,4 @@ function respond($success, $message, $data = []) {
     ]);
     exit;
 }
+?>
